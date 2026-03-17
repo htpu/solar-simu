@@ -155,7 +155,7 @@ function createPlanets() {
             mesh.add(r);
         }
         planets.push({ mesh, group: orbitGroup, orbitLine, speed: data.speed });
-    }
+    });
 }
 
 function createStars() {
