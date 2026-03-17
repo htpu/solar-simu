@@ -155,6 +155,23 @@ function initTimeline() {
         updateTimelinePosition();
     }
     
+    function updateTimelineUI() {
+        if (timelineMode !== 'auto') return;
+        
+        let year = currentDate.getFullYear();
+        if (year < 1) year = 1;
+        if (year > 3000) year = 3000;
+        
+        yearSelect.value = year;
+        monthSelect.value = currentDate.getMonth() + 1;
+        daySelect.value = currentDate.getDate();
+        hourSelect.value = currentDate.getHours();
+        minuteSelect.value = currentDate.getMinutes();
+        
+        document.getElementById('timeline-date').textContent = getTimelineDateString(currentDate);
+        updateTimelinePosition();
+    }
+    
     yearSelect.addEventListener('change', () => {
         timelineMode = 'manual';
         currentDate.setFullYear(parseInt(yearSelect.value));
@@ -215,6 +232,7 @@ function initTimeline() {
     });
     
     function handleTimelineClick(e) {
+        timelineMode = 'manual';
         const rect = track.getBoundingClientRect();
         const x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
         const year = Math.round(x * 2999) + 1;
@@ -761,11 +779,22 @@ function animate() {
     uiElements.aiPulse.style.color = keyPresent ? "var(--neon-cyan)" : "#666";
 
     if (!paused && timelineMode === 'auto') {
-        timeCount += 0.01 * spd * baseVelocityFactor;
+        const secondsPerFrame = 1 / 60;
+        const yearsElapsed = spd * baseVelocityFactor * secondsPerFrame;
+        currentDate.setFullYear(currentDate.getFullYear() + yearsElapsed);
+        
+        updateTimelineUI();
+        
+        const jd = julianDate(currentDate);
         planets.forEach(p => {
-            if (p.isMoon) return;
-            p.group.rotation.y += p.speed * spd * baseVelocityFactor;
-            p.mesh.rotation.y += 0.01 * spd * baseVelocityFactor;
+            if (p.isMoon || p.mesh.userData.name === 'Sun') return;
+            const pos = calculatePlanetPosition(p.mesh.userData.name, jd);
+            const dist = p.mesh.userData.dist;
+            if (dist > 0) {
+                const angle = Math.atan2(pos.z, pos.x);
+                p.group.rotation.y = angle;
+            }
+            p.mesh.rotation.y += 0.001;
         });
     } else if (timelineMode === 'manual') {
         const jd = julianDate(currentDate);
