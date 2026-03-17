@@ -3,6 +3,16 @@
 ## Purpose
 This file defines working rules for AI agents operating in this repository.
 
+## Development Workflow
+For each change/requirement:
+1. Update SPEC.md with the new requirement
+2. Modify the code
+3. Test locally
+4. Fix any bugs
+5. Bump version number in index.html (title + version display)
+6. Update SPEC.md version if not already done
+7. Commit and push
+
 ## Project Overview
 - **Type**: Single-page 3D solar system visualization
 - **Tech Stack**: HTML5, Three.js, Tailwind CSS, GLSL shaders
