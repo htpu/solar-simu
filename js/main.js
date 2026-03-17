@@ -761,7 +761,7 @@ function animate() {
         speedText = (spd / 365).toFixed(1) + 'y/s';
     }
     uiElements.speedVal.innerText = speedText;
-    const paused = uiElements.pauseRotation.checked;
+    const paused = uiElements.pauseRotation && uiElements.pauseRotation.checked;
     const trueScale = uiElements.trueScale.checked;
 
     const keyPresent = getActiveApiKey() !== "";
