@@ -8,21 +8,20 @@ let targetObject = null;
 let timeCount = 0;
 let uiElements = {};
 const textureLoader = new THREE.TextureLoader();
-textureLoader.setCrossOrigin('anonymous');
 
 const celestialData = [
-    { name: "Mercury", size: 0.8, dist: 25, speed: 0.047, color: "#9e9e9e", incl: 7.0, texture: "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/mercury.jpg" },
-    { name: "Venus", size: 1.5, dist: 40, speed: 0.035, color: "#e3bb76", incl: 3.4, texture: "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/venus.jpg" },
-    { name: "Earth", size: 1.6, dist: 60, speed: 0.029, color: "#2271b3", incl: 0, texture: "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth.jpg" },
-    { name: "Mars", size: 1.2, dist: 80, speed: 0.024, color: "#e27b58", incl: 1.8, texture: "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/mars.jpg" },
-    { name: "Jupiter", size: 4.5, dist: 130, speed: 0.013, color: "#d39c7e", incl: 1.3, texture: "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/jupiter.jpg" },
-    { name: "Saturn", size: 3.8, dist: 180, speed: 0.009, color: "#c5ab6e", incl: 2.5, hasRings: true, texture: "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/saturn.jpg", ringTexture: "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/saturn_ring.png" },
-    { name: "Uranus", size: 2.5, dist: 230, speed: 0.006, color: "#bbe1e4", incl: 0.8, texture: "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/uranus.jpg" },
-    { name: "Neptune", size: 2.4, dist: 270, speed: 0.005, color: "#6081ff", incl: 1.8, texture: "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/neptune.jpg" },
-    { name: "Pluto", size: 0.6, dist: 310, speed: 0.004, color: "#937d64", incl: 17.2, texture: "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/pluto.jpg" }
+    { name: "Mercury", size: 0.8, dist: 25, speed: 0.047, color: "#9e9e9e", incl: 7.0, texture: "textures/mercury.jpg" },
+    { name: "Venus", size: 1.5, dist: 40, speed: 0.035, color: "#e3bb76", incl: 3.4, texture: "textures/venus_surface.jpg" },
+    { name: "Earth", size: 1.6, dist: 60, speed: 0.029, color: "#2271b3", incl: 0, texture: "textures/earth_daymap.jpg" },
+    { name: "Mars", size: 1.2, dist: 80, speed: 0.024, color: "#e27b58", incl: 1.8, texture: "textures/mars.jpg" },
+    { name: "Jupiter", size: 4.5, dist: 130, speed: 0.013, color: "#d39c7e", incl: 1.3, texture: "textures/jupiter.jpg" },
+    { name: "Saturn", size: 3.8, dist: 180, speed: 0.009, color: "#c5ab6e", incl: 2.5, hasRings: true, texture: "textures/saturn.jpg", ringTexture: "textures/saturn_ring.png" },
+    { name: "Uranus", size: 2.5, dist: 230, speed: 0.006, color: "#bbe1e4", incl: 0.8, texture: "textures/uranus.jpg" },
+    { name: "Neptune", size: 2.4, dist: 270, speed: 0.005, color: "#6081ff", incl: 1.8, texture: "textures/neptune.jpg" },
+    { name: "Pluto", size: 0.6, dist: 310, speed: 0.004, color: "#937d64", incl: 17.2, texture: "textures/pluto.jpg" }
 ];
 
-const sunTextureUrl = "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/sun.jpg";
+const sunTextureUrl = "textures/sun.jpg";
 
 function getActiveApiKey() {
     return uiElements.keyInput.value.trim() || fallbackApiKey;
