@@ -7,11 +7,25 @@ This file defines working rules for AI agents operating in this repository.
 For each change/requirement:
 1. Update SPEC.md with the new requirement
 2. Modify the code
-3. Test locally
+3. Test locally (open in browser or use local server)
 4. Fix any bugs
-5. Bump version number in index.html (title + version display)
-6. Update SPEC.md version if not already done
-7. Commit and push
+5. Bump version number in:
+   - index.html (title): `<title>...V0.0.X</title>`
+   - index.html (version display): `<span class="text-[9px]">v0.0.X</span>`
+6. Update SPEC.md version
+7. Commit with message: "v0.0.X - description"
+8. Push to origin main
+
+### Version Bumping
+```bash
+# Update version in files:
+# 1. index.html title: V0.0.X
+# 2. index.html version span: v0.0.X  
+# 3. SPEC.md: - **Version**: 0.0.X
+
+# Commit:
+git add . && git commit -m "v0.0.X - description" && git push origin main
+```
 
 ## Project Overview
 - **Type**: Single-page 3D solar system visualization
