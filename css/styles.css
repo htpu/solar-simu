@@ -113,3 +113,37 @@ input[type=range] { accent-color: var(--neon-cyan); width: 100%; margin-top: 4px
 
 #timeline-track { user-select: none; }
 #timeline-cursor { transition: left 0.1s; }
+
+@media (max-width: 768px) {
+    .ui-panel-right {
+        width: calc(100% - 40px);
+        right: 10px;
+        top: 10px;
+        max-height: 45vh;
+        overflow-y: auto;
+    }
+    
+    .ui-panel-left {
+        width: calc(100% - 40px);
+        left: 10px;
+        top: auto;
+        bottom: 10px;
+        max-height: 30vh;
+    }
+    
+    .ui-panel-bottom {
+        display: none;
+    }
+    
+    .glass-panel {
+        clip-path: none;
+    }
+    
+    #planet-tooltip {
+        width: 180px;
+        padding: 8px;
+    }
+    
+    .tooltip-val { font-size: 12px; }
+    .tooltip-label { font-size: 8px; }
+}
