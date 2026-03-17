@@ -12,13 +12,33 @@ const textureLoader = new THREE.TextureLoader();
 const celestialData = [
     { name: "Mercury", size: 0.8, dist: 25, speed: 0.047, color: "#9e9e9e", incl: 7.0, texture: "textures/mercury.jpg" },
     { name: "Venus", size: 1.5, dist: 40, speed: 0.035, color: "#e3bb76", incl: 3.4, texture: "textures/venus_surface.jpg" },
-    { name: "Earth", size: 1.6, dist: 60, speed: 0.029, color: "#2271b3", incl: 0, texture: "textures/earth_daymap.jpg" },
-    { name: "Mars", size: 1.2, dist: 80, speed: 0.024, color: "#e27b58", incl: 1.8, texture: "textures/mars.jpg" },
-    { name: "Jupiter", size: 4.5, dist: 130, speed: 0.013, color: "#d39c7e", incl: 1.3, texture: "textures/jupiter.jpg" },
-    { name: "Saturn", size: 3.8, dist: 180, speed: 0.009, color: "#c5ab6e", incl: 2.5, hasRings: true, texture: "textures/saturn.jpg", ringTexture: "textures/saturn_ring.png" },
-    { name: "Uranus", size: 2.5, dist: 230, speed: 0.006, color: "#bbe1e4", incl: 0.8, texture: "textures/uranus.jpg" },
-    { name: "Neptune", size: 2.4, dist: 270, speed: 0.005, color: "#6081ff", incl: 1.8, texture: "textures/neptune.jpg" },
-    { name: "Pluto", size: 0.6, dist: 310, speed: 0.004, color: "#937d64", incl: 17.2, texture: "textures/pluto.jpg" }
+    { name: "Earth", size: 1.6, dist: 60, speed: 0.029, color: "#2271b3", incl: 0, texture: "textures/earth_daymap.jpg", moons: [
+        { name: "Moon", size: 0.4, dist: 4, speed: 0.8, texture: "textures/moon.jpg" }
+    ]},
+    { name: "Mars", size: 1.2, dist: 80, speed: 0.024, color: "#e27b58", incl: 1.8, texture: "textures/mars.jpg", moons: [
+        { name: "Phobos", size: 0.15, dist: 2.5, speed: 2.5, texture: "textures/phobos.jpg" },
+        { name: "Deimos", size: 0.1, dist: 3.5, speed: 1.8, texture: "textures/phobos.jpg" }
+    ]},
+    { name: "Jupiter", size: 4.5, dist: 130, speed: 0.013, color: "#d39c7e", incl: 1.3, texture: "textures/jupiter.jpg", moons: [
+        { name: "Io", size: 0.3, dist: 7, speed: 2.0, texture: "textures/io.jpg" },
+        { name: "Europa", size: 0.25, dist: 8.5, speed: 1.8, texture: "textures/europa.jpg" },
+        { name: "Ganymede", size: 0.4, dist: 10.5, speed: 1.5, texture: "textures/ganymede.jpg" },
+        { name: "Callisto", size: 0.35, dist: 13, speed: 1.2, texture: "textures/callisto.jpg" }
+    ]},
+    { name: "Saturn", size: 3.8, dist: 180, speed: 0.009, color: "#c5ab6e", incl: 2.5, hasRings: true, texture: "textures/saturn.jpg", ringTexture: "textures/saturn_ring.png", moons: [
+        { name: "Titan", size: 0.4, dist: 9, speed: 1.2, texture: "textures/titan.jpg" },
+        { name: "Enceladus", size: 0.2, dist: 11, speed: 1.8, texture: "textures/enceladus.jpg" }
+    ]},
+    { name: "Uranus", size: 2.5, dist: 230, speed: 0.006, color: "#bbe1e4", incl: 0.8, texture: "textures/uranus.jpg", moons: [
+        { name: "Titania", size: 0.25, dist: 6, speed: 1.5, texture: "textures/titania.jpg" },
+        { name: "Oberon", size: 0.25, dist: 7.5, speed: 1.3, texture: "textures/titania.jpg" }
+    ]},
+    { name: "Neptune", size: 2.4, dist: 270, speed: 0.005, color: "#6081ff", incl: 1.8, texture: "textures/neptune.jpg", moons: [
+        { name: "Triton", size: 0.3, dist: 6, speed: 1.4, texture: "textures/triton.jpg" }
+    ]},
+    { name: "Pluto", size: 0.6, dist: 310, speed: 0.004, color: "#937d64", incl: 17.2, texture: "textures/pluto.jpg", moons: [
+        { name: "Charon", size: 0.2, dist: 2, speed: 2.0, texture: "textures/charon.jpg" }
+    ]}
 ];
 
 const sunTextureUrl = "textures/sun.jpg";
@@ -73,6 +93,8 @@ function init() {
         keyInput: document.getElementById('apiKeyInput')
     };
 
+    uiElements.tooltip.style.display = 'none';
+
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 20000);
     camera.position.set(0, 450, 900);
@@ -104,7 +126,17 @@ function init() {
 }
 
 function loadTexture(url) {
-    return textureLoader.load(url);
+    const texture = textureLoader.load(url);
+    return texture;
+}
+
+function loadTextureWithFallback(url, fallbackColor) {
+    try {
+        const texture = textureLoader.load(url);
+        return texture;
+    } catch (e) {
+        return generatePlanetTexture(fallbackColor);
+    }
 }
 
 function createSun() {
@@ -153,6 +185,23 @@ function createPlanets() {
             r.rotation.x = Math.PI / 2;
             mesh.add(r);
         }
+
+        if (data.moons) {
+            const moonGroup = new THREE.Group();
+            mesh.add(moonGroup);
+            data.moons.forEach(moonData => {
+                const moonTexture = loadTextureWithFallback(moonData.texture, "#888888");
+                const moonMesh = new THREE.Mesh(
+                    new THREE.SphereGeometry(moonData.size, 16, 16),
+                    new THREE.MeshStandardMaterial({ map: moonTexture, roughness: 0.8 })
+                );
+                moonMesh.position.x = moonData.dist;
+                moonMesh.userData = { name: moonData.name, isMoon: true };
+                moonGroup.add(moonMesh);
+                planets.push({ mesh: moonMesh, group: moonGroup, speed: moonData.speed, isMoon: true, parentPlanet: mesh });
+            });
+        }
+
         planets.push({ mesh, group: orbitGroup, orbitLine, speed: data.speed });
     });
 }
