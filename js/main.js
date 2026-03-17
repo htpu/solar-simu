@@ -768,46 +768,13 @@ function animate() {
     uiElements.aiPulse.innerText = keyPresent ? "ON" : "OFF";
     uiElements.aiPulse.style.color = keyPresent ? "var(--neon-cyan)" : "#666";
 
-    if (!paused && timelineMode === 'auto') {
-        const secondsPerFrame = 1 / 60;
-        const yearsElapsed = spd * baseVelocityFactor * secondsPerFrame;
-        currentDate.setFullYear(currentDate.getFullYear() + yearsElapsed);
-        
-        if (currentDate.getFullYear() > 3000) currentDate.setFullYear(3000);
-        if (currentDate.getFullYear() < 1) currentDate.setFullYear(1);
-        
-        updateTimelineUI();
-        
-        const jd = julianDate(currentDate);
+    if (!paused) {
+        timeCount += 0.01 * spd * baseVelocityFactor;
         planets.forEach(p => {
             if (p.isMoon) return;
             if (!p.group) return;
-            if (p.mesh.userData.name === 'Sun') return;
-            const pos = calculatePlanetPosition(p.mesh.userData.name, jd);
-            if (pos && !isNaN(pos.x) && !isNaN(pos.z)) {
-                const angle = Math.atan2(pos.z, pos.x);
-                p.group.rotation.y = angle;
-            }
-            p.mesh.rotation.y += 0.001;
-        });
-    } else if (timelineMode === 'manual') {
-        const jd = julianDate(currentDate);
-        planets.forEach(p => {
-            if (p.isMoon) return;
-            if (!p.group) return;
-            if (p.mesh.userData.name === 'Sun') return;
-            const pos = calculatePlanetPosition(p.mesh.userData.name, jd);
-            if (pos && !isNaN(pos.x) && !isNaN(pos.z)) {
-                const angle = Math.atan2(pos.z, pos.x);
-                p.group.rotation.y = angle;
-            }
-            p.mesh.rotation.y += 0.001;
-        });
-    } else {
-        planets.forEach(p => {
-            if (p.isMoon) return;
-            if (!p.group) return;
-            p.mesh.rotation.y += 0.001;
+            p.group.rotation.y += p.speed * spd * baseVelocityFactor;
+            p.mesh.rotation.y += 0.01 * spd * baseVelocityFactor;
         });
     }
     
