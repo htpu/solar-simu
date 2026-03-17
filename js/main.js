@@ -830,7 +830,12 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-function togglePanel(side) {
+function toggleMenu() {
+    const menu = document.getElementById('main-menu');
+    const overlay = document.getElementById('main-menu-overlay');
+    menu.classList.toggle('collapsed');
+    overlay.classList.toggle('hidden');
+}
     const panel = document.getElementById('panel-' + side);
     const content = document.getElementById('panel-' + side + '-content');
     if (panel.classList.contains('collapsed')) {

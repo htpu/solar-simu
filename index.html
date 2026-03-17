@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Solar System - AI Digital Twin V0.1.5</title>
+    <title>3D Solar System - AI Digital Twin V0.1.6</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -24,7 +24,7 @@
     <div class="ui-panel-left glass-panel" id="panel-left">
         <div class="flex justify-between items-center mb-2">
             <h3>Celestial List</h3>
-            <span class="text-[9px] text-cyan-600">v0.1.5</span>
+            <span class="text-[9px] text-cyan-600">v0.1.6</span>
         </div>
         <div id="panel-left-content">
             <div id="index-list" class="mt-4">
@@ -36,39 +36,68 @@
 
     <button id="toggle-left" class="mobile-toggle mobile-toggle-left" onclick="togglePanel('left')">☰</button>
 
-    <button id="mobile-menu-btn" class="mobile-menu-btn" onclick="toggleMobileMenu()">⚙</button>
+    <button id="menu-btn" class="menu-btn" onclick="toggleMenu()">☰ ⚙</button>
 
-    <div id="mobile-menu" class="mobile-menu glass-panel hidden">
-        <div class="mobile-menu-tabs">
-            <button class="mobile-tab active" data-tab="planets" onclick="switchMobileTab('planets')">🪐</button>
-            <button class="mobile-tab" data-tab="time" onclick="switchMobileTab('time')">⏱</button>
-            <button class="mobile-tab" data-tab="ai" onclick="switchMobileTab('ai')">🤖</button>
+    <div id="main-menu" class="main-menu glass-panel collapsed">
+        <div class="menu-header">
+            <h2>COMMAND CENTER</h2>
+            <button onclick="toggleMenu()" class="menu-close">✕</button>
         </div>
-        <div id="mobile-tab-planets" class="mobile-tab-content">
-            <div class="text-[10px] text-cyan-400 mb-2">PLANETS</div>
-            <div id="mobile-planet-btns"></div>
+        
+        <div class="mb-4">
+            <div class="flex justify-between text-[10px]"><span>TIME RATE</span><span id="speedVal">1.0d/s</span></div>
+            <input type="range" id="speedRange" min="0.00027" max="365" step="0.00027" value="1">
         </div>
-        <div id="mobile-tab-time" class="mobile-tab-content hidden">
-            <div class="text-[10px] text-cyan-400 mb-2">TIME RATE</div>
-            <input type="range" id="mobile-speedRange" min="0.00027" max="365" step="0.00027" value="1">
-            <div id="mobile-speedVal" class="text-center text-[10px] my-2">1.0d/s</div>
-            <div class="text-[10px] text-cyan-400 mb-2 mt-4">DATE</div>
+
+        <div class="toggle-row">
+            <span class="text-[10px]">RENDER ORBITS</span>
+            <input type="checkbox" id="showOrbits" checked>
+        </div>
+        <div class="toggle-row">
+            <span class="text-[10px]">SCIENTIFIC SCALE</span>
+            <input type="checkbox" id="trueScale">
+        </div>
+        <div class="toggle-row">
+            <span class="text-[10px]">SYSTEM PAUSE</span>
+            <input type="checkbox" id="pauseRotation">
+        </div>
+
+        <div class="mt-4 border-t border-cyan-900/50 pt-4">
+            <h3 class="text-[11px] mb-2">TIMELINE</h3>
+            <div id="timeline-date" class="text-xs font-mono text-cyan-400 mb-2">2026-01-01 00:00:00</div>
             <div class="flex gap-1 mb-2">
-                <select id="mobile-timeline-year" class="key-input w-full text-center text-[10px]"></select>
-                <select id="mobile-timeline-month" class="key-input w-full text-center text-[10px]"></select>
-                <select id="mobile-timeline-day" class="key-input w-full text-center text-[10px]"></select>
+                <select id="timeline-year" class="key-input w-20 text-center text-[10px]"></select>
+                <select id="timeline-month" class="key-input w-14 text-center text-[10px]"></select>
+                <select id="timeline-day" class="key-input w-14 text-center text-[10px]"></select>
+                <select id="timeline-hour" class="key-input w-14 text-center text-[10px]"></select>
+                <select id="timeline-minute" class="key-input w-14 text-center text-[10px]"></select>
             </div>
-            <div id="mobile-timeline-events" class="text-[9px] text-gray-400 max-h-20 overflow-y-auto"></div>
+            <div class="relative mb-2">
+                <div id="timeline-track" class="h-2 bg-gray-800 rounded-full cursor-pointer relative">
+                    <div id="timeline-progress" class="h-full bg-cyan-500 rounded-full" style="width: 50%"></div>
+                    <div id="timeline-cursor" class="absolute top-0 w-3 h-3 bg-cyan-400 rounded-full -translate-x-1/2 -translate-y-1/2 shadow-lg"></div>
+                    <div id="event-markers"></div>
+                </div>
+            </div>
+            <div class="flex justify-between text-[9px] text-gray-500 mb-2">
+                <span>0001</span>
+                <span>1000</span>
+                <span>2000</span>
+                <span>3000</span>
+            </div>
+            <div id="timeline-events" class="text-[9px] text-gray-400 max-h-16 overflow-y-auto"></div>
         </div>
-        <div id="mobile-tab-ai" class="mobile-tab-content hidden">
-            <div class="text-[10px] text-cyan-400 mb-2">GEMINI API KEY</div>
-            <input type="password" id="mobile-apiKeyInput" class="key-input" placeholder="Enter API Key...">
-            <button class="ai-btn w-full mt-2" onclick="generateDetailedIntel()">✨ SCAN</button>
-            <button class="ai-btn w-full mt-2" onclick="resetView()">🏠 RESET VIEW</button>
+
+        <div class="mt-4 border-t border-cyan-900/50 pt-4">
+            <h3 class="text-[11px] mb-2">Neural Link</h3>
+            <input type="password" id="apiKeyInput" class="key-input" placeholder="Enter Gemini API Key...">
+            <div class="key-hint">* Input API Key to enable AI</div>
         </div>
+
+        <button class="ai-btn w-full mt-4" onclick="resetView()">🏠 RESET VIEW</button>
     </div>
 
-    <div class="ui-panel-right glass-panel" id="panel-right">
+    <div id="main-menu-overlay" class="main-menu-overlay hidden" onclick="toggleMenu()"></div>
         <h2>Command Center</h2>
         
         <div class="mb-4">
