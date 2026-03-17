@@ -9,6 +9,264 @@ let timeCount = 0;
 let uiElements = {};
 const textureLoader = new THREE.TextureLoader();
 
+let currentDate = new Date();
+let isManualTimeControl = false;
+let timelineMode = 'auto';
+
+const astronomicalEvents = [
+    { year: 1054, month: 7, day: 4, name: "Supernova SN 1054 (Crab Nebula)", type: "supernova" },
+    { year: 1543, month: 1, day: 1, name: "Copernicus: De revolutionibus", type: "publication" },
+    { year: 1572, month: 11, day: 11, name: "Tycho's Supernova", type: "supernova" },
+    { year: 1609, month: 1, day: 1, name: "Kepler's Laws", type: "discovery" },
+    { year: 1610, month: 1, day: 1, name: "Galileo's Moons of Jupiter", type: "discovery" },
+    { year: 1687, month: 7, day: 5, name: "Newton: Principia", type: "publication" },
+    { year: 1758, month: 12, day: 25, name: "Halley's Comet predicted", type: "comet" },
+    { year: 1781, month: 3, day: 13, name: "Discovery of Uranus", type: "planet" },
+    { year: 1839, month: 1, day: 1, name: "First photograph of Sun", type: "photo" },
+    { year: 1846, month: 9, day: 23, name: "Discovery of Neptune", type: "planet" },
+    { year: 1868, month: 10, day: 20, name: "Discovery of Helium", type: "element" },
+    { year: 1908, month: 6, day: 30, name: "Tunguska Event", type: "impact" },
+    { year: 1915, month: 11, day: 25, name: "Einstein: General Relativity", type: "publication" },
+    { year: 1928, month: 1, day: 1, name: "Discovery of Pluto", type: "planet" },
+    { year: 1957, month: 10, day: 4, name: "Sputnik 1 launched", type: "spacecraft" },
+    { year: 1961, month: 4, day: 12, name: "Yuri Gagarin: First human in space", type: "spacecraft" },
+    { year: 1969, month: 7, day: 20, name: "Apollo 11: Moon landing", type: "spacecraft" },
+    { year: 1977, month: 9, day: 5, name: "Voyager 1 launched", type: "spacecraft" },
+    { year: 1986, month: 3, day: 9, name: "Halley's Comet closest approach", type: "comet" },
+    { year: 1990, month: 4, day: 24, name: "Hubble Space Telescope", type: "spacecraft" },
+    { year: 1997, month: 7, day: 4, name: "Mars Pathfinder", type: "spacecraft" },
+    { year: 2006, month: 8, day: 24, name: "Pluto reclassified", type: "classification" },
+    { year: 2012, month: 8, day: 6, name: "Curiosity: Mars landing", type: "spacecraft" },
+    { year: 2015, month: 7, day: 14, name: "New Horizons: Pluto flyby", type: "spacecraft" },
+    { year: 2019, month: 1, day: 1, name: "Voyager 2: Interstellar", type: "spacecraft" },
+    { year: 2020, month: 7, day: 30, name: "Perseverance launch", type: "spacecraft" },
+    { year: 2021, month: 2, 18, name: "Perseverance: Mars flight", type: "spacecraft" },
+];
+
+const orbitalElements = {
+    Mercury: { a: 0.387, e: 0.2056, i: 7.0, L: 252.25, w: 77.46, node: 48.33, period: 87.97 },
+    Venus: { a: 0.723, e: 0.0068, i: 3.39, L: 181.98, w: 131.53, node: 76.68, period: 224.7 },
+    Earth: { a: 1.0, e: 0.0167, i: 0.0, L: 100.46, w: 102.95, node: 0.0, period: 365.25 },
+    Mars: { a: 1.524, e: 0.0934, i: 1.85, L: 355.45, w: 336.04, node: 49.58, period: 687.0 },
+    Jupiter: { a: 5.203, e: 0.0489, i: 1.3, L: 34.33, w: 14.75, node: 100.56, period: 4333 },
+    Saturn: { a: 9.537, e: 0.0565, i: 2.48, L: 49.94, w: 92.43, node: 113.71, period: 10759 },
+    Uranus: { a: 19.19, e: 0.0457, i: 0.77, L: 313.23, w: 170.96, node: 74.0, period: 30687 },
+    Neptune: { a: 30.07, e: 0.0113, i: 1.77, L: 304.88, w: 44.97, node: 131.72, period: 60190 },
+    Pluto: { a: 39.48, e: 0.2488, i: 17.16, L: 14.85, w: 224.27, node: 110.3, period: 90560 }
+};
+
+function julianDate(date) {
+    return (date.getTime() / 86400000) + 2440587.5;
+}
+
+function calculatePlanetPosition(name, jd) {
+    const oe = orbitalElements[name];
+    if (!oe) return { x: 0, z: 0 };
+    
+    const T = (jd - 2451545.0) / 36525;
+    
+    let M = oe.L + 36000.77 * T;
+    M = (M % 360 + 360) % 360;
+    
+    const M_rad = M * Math.PI / 180;
+    let E = M_rad;
+    for (let i = 0; i < 5; i++) {
+        E = M_rad + oe.e * Math.sin(E);
+    }
+    
+    const xv = oe.a * (Math.cos(E) - oe.e);
+    const yv = oe.a * Math.sqrt(1 - oe.e * oe.e) * Math.sin(E);
+    
+    let v = Math.atan2(yv, xv);
+    let r = Math.sqrt(xv * xv + yv * yv);
+    
+    let N = oe.node * Math.PI / 180;
+    let i = oe.i * Math.PI / 180;
+    let w = oe.w * Math.PI / 180;
+    
+    let x = r * (Math.cos(N) * Math.cos(v + w) - Math.sin(N) * Math.sin(v + w) * Math.cos(i));
+    let z = r * (Math.sin(N) * Math.cos(v + w) + Math.cos(N) * Math.sin(v + w) * Math.cos(i));
+    
+    return { x, z };
+}
+
+function getTimelineDateString(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    const h = String(date.getHours()).padStart(2, '0');
+    const min = String(date.getMinutes()).padStart(2, '0');
+    const s = String(date.getSeconds()).padStart(2, '0');
+    return `${y}-${m}-${d} ${h}:${min}:${s}`;
+}
+
+function initTimeline() {
+    const yearSelect = document.getElementById('timeline-year');
+    const monthSelect = document.getElementById('timeline-month');
+    const daySelect = document.getElementById('timeline-day');
+    const hourSelect = document.getElementById('timeline-hour');
+    const minuteSelect = document.getElementById('timeline-minute');
+    
+    for (let y = 1; y <= 3000; y++) {
+        const opt = document.createElement('option');
+        opt.value = y;
+        opt.textContent = y;
+        yearSelect.appendChild(opt);
+    }
+    
+    for (let m = 1; m <= 12; m++) {
+        const opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = String(m).padStart(2, '0');
+        monthSelect.appendChild(opt);
+    }
+    
+    for (let d = 1; d <= 31; d++) {
+        const opt = document.createElement('option');
+        opt.value = d;
+        opt.textContent = String(d).padStart(2, '0');
+        daySelect.appendChild(opt);
+    }
+    
+    for (let h = 0; h < 24; h++) {
+        const opt = document.createElement('option');
+        opt.value = h;
+        opt.textContent = String(h).padStart(2, '0');
+        hourSelect.appendChild(opt);
+    }
+    
+    for (let m = 0; m < 60; m++) {
+        const opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = String(m).padStart(2, '0');
+        minuteSelect.appendChild(opt);
+    }
+    
+    function updateFromDate() {
+        yearSelect.value = currentDate.getFullYear();
+        monthSelect.value = currentDate.getMonth() + 1;
+        daySelect.value = currentDate.getDate();
+        hourSelect.value = currentDate.getHours();
+        minuteSelect.value = currentDate.getMinutes();
+        
+        document.getElementById('timeline-date').textContent = getTimelineDateString(currentDate);
+        updateTimelinePosition();
+    }
+    
+    yearSelect.addEventListener('change', () => {
+        timelineMode = 'manual';
+        currentDate.setFullYear(parseInt(yearSelect.value));
+        updateFromDate();
+    });
+    
+    monthSelect.addEventListener('change', () => {
+        timelineMode = 'manual';
+        currentDate.setMonth(parseInt(monthSelect.value) - 1);
+        updateFromDate();
+    });
+    
+    daySelect.addEventListener('change', () => {
+        timelineMode = 'manual';
+        currentDate.setDate(parseInt(daySelect.value));
+        updateFromDate();
+    });
+    
+    hourSelect.addEventListener('change', () => {
+        timelineMode = 'manual';
+        currentDate.setHours(parseInt(hourSelect.value));
+        updateFromDate();
+    });
+    
+    minuteSelect.addEventListener('change', () => {
+        timelineMode = 'manual';
+        currentDate.setMinutes(parseInt(minuteSelect.value));
+        updateFromDate();
+    });
+    
+    document.getElementById('timeline-prev').addEventListener('click', () => {
+        timelineMode = 'manual';
+        currentDate.setDate(currentDate.getDate() - 1);
+        updateFromDate();
+    });
+    
+    document.getElementById('timeline-next').addEventListener('click', () => {
+        timelineMode = 'manual';
+        currentDate.setDate(currentDate.getDate() + 1);
+        updateFromDate();
+    });
+    
+    const track = document.getElementById('timeline-track');
+    let isDragging = false;
+    
+    track.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        timelineMode = 'manual';
+        handleTimelineClick(e);
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+        if (isDragging) handleTimelineClick(e);
+    });
+    
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
+    
+    function handleTimelineClick(e) {
+        const rect = track.getBoundingClientRect();
+        const x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        const year = Math.round(x * 2999) + 1;
+        currentDate.setFullYear(year);
+        updateFromDate();
+    }
+    
+    function updateTimelinePosition() {
+        const year = currentDate.getFullYear();
+        const progress = (year - 1) / 2999 * 100;
+        document.getElementById('timeline-progress').style.width = progress + '%';
+        document.getElementById('timeline-cursor').style.left = progress + '%';
+    }
+    
+    function createEventMarkers() {
+        const container = document.getElementById('event-markers');
+        astronomicalEvents.forEach(event => {
+            const pos = (event.year - 1) / 2999 * 100;
+            const marker = document.createElement('div');
+            marker.className = 'timeline-event-dot';
+            marker.style.left = pos + '%';
+            marker.title = event.name;
+            marker.addEventListener('click', () => {
+                timelineMode = 'manual';
+                currentDate.setFullYear(event.year);
+                currentDate.setMonth(event.month - 1);
+                currentDate.setDate(event.day);
+                currentDate.setHours(12);
+                updateFromDate();
+            });
+            container.appendChild(marker);
+        });
+        
+        const eventsList = document.getElementById('timeline-events');
+        astronomicalEvents.forEach(event => {
+            const div = document.createElement('div');
+            div.textContent = `${event.year}: ${event.name}`;
+            div.className = 'cursor-pointer hover:text-cyan-400';
+            div.addEventListener('click', () => {
+                timelineMode = 'manual';
+                currentDate.setFullYear(event.year);
+                currentDate.setMonth(event.month - 1);
+                currentDate.setDate(event.day);
+                currentDate.setHours(12);
+                updateFromDate();
+            });
+            eventsList.appendChild(div);
+        });
+    }
+    
+    createEventMarkers();
+    updateFromDate();
+}
+
 const celestialData = [
     { name: "Mercury", size: 0.8, dist: 25, speed: 0.047, color: "#9e9e9e", incl: 7.0, texture: "textures/mercury.jpg" },
     { name: "Venus", size: 1.5, dist: 40, speed: 0.035, color: "#e3bb76", incl: 3.4, texture: "textures/venus_surface.jpg" },
@@ -94,6 +352,8 @@ function init() {
     };
 
     uiElements.tooltip.style.display = 'none';
+
+    initTimeline();
 
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 20000);
@@ -483,11 +743,29 @@ function animate() {
     uiElements.aiPulse.innerText = keyPresent ? "ON" : "OFF";
     uiElements.aiPulse.style.color = keyPresent ? "var(--neon-cyan)" : "#666";
 
-    if (!paused) {
+    if (!paused && timelineMode === 'auto') {
         timeCount += 0.01 * spd * baseVelocityFactor;
         planets.forEach(p => {
+            if (p.isMoon) return;
             p.group.rotation.y += p.speed * spd * baseVelocityFactor;
             p.mesh.rotation.y += 0.01 * spd * baseVelocityFactor;
+        });
+    } else if (timelineMode === 'manual') {
+        const jd = julianDate(currentDate);
+        planets.forEach(p => {
+            if (p.isMoon || p.mesh.userData.name === 'Sun') return;
+            const pos = calculatePlanetPosition(p.mesh.userData.name, jd);
+            const dist = p.mesh.userData.dist;
+            if (dist > 0) {
+                const angle = Math.atan2(pos.z, pos.x);
+                p.group.rotation.y = angle;
+            }
+            p.mesh.rotation.y += 0.001;
+        });
+    } else {
+        planets.forEach(p => {
+            if (p.isMoon) return;
+            p.mesh.rotation.y += 0.001;
         });
     }
 

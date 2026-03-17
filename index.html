@@ -77,6 +77,38 @@
         <div id="ai-detailed-box" class="hidden mt-2 pt-2 border-t border-cyan-900/50 text-[11px] text-gray-400 max-h-24 overflow-y-auto leading-relaxed"></div>
     </div>
 
+    <div class="ui-panel-timeline glass-panel">
+        <div class="flex items-center justify-between mb-2">
+            <h3 class="text-[11px]">TIMELINE</h3>
+            <div id="timeline-date" class="text-xs font-mono text-cyan-400">2026-01-01 00:00:00</div>
+        </div>
+        <div class="relative">
+            <div id="timeline-track" class="h-2 bg-gray-800 rounded-full cursor-pointer relative">
+                <div id="timeline-progress" class="h-full bg-cyan-500 rounded-full" style="width: 50%"></div>
+                <div id="timeline-cursor" class="absolute top-0 w-3 h-3 bg-cyan-400 rounded-full -translate-x-1/2 -translate-y-1/2 shadow-lg"></div>
+                <div id="event-markers"></div>
+            </div>
+            <div class="flex justify-between text-[9px] text-gray-500 mt-1">
+                <span>0001</span>
+                <span>1000</span>
+                <span>2000</span>
+                <span>3000</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 mt-3">
+            <button id="timeline-prev" class="btn-sci w-auto px-2">◀</button>
+            <div class="flex-1 flex gap-1">
+                <select id="timeline-year" class="key-input w-20 text-center"></select>
+                <select id="timeline-month" class="key-input w-16 text-center"></select>
+                <select id="timeline-day" class="key-input w-16 text-center"></select>
+                <select id="timeline-hour" class="key-input w-16 text-center"></select>
+                <select id="timeline-minute" class="key-input w-16 text-center"></select>
+            </div>
+            <button id="timeline-next" class="btn-sci w-auto px-2">▶</button>
+        </div>
+        <div id="timeline-events" class="mt-2 text-[9px] text-gray-400 max-h-16 overflow-y-auto"></div>
+    </div>
+
     <script src="main.js"></script>
 </body>
 </html>
