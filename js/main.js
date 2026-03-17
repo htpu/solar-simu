@@ -63,6 +63,8 @@ function calculatePlanetPosition(name, jd) {
     const oe = orbitalElements[name];
     if (!oe) return { x: 0, z: 0 };
     
+    if (isNaN(jd) || !isFinite(jd)) return { x: 0, z: 0 };
+    
     const T = (jd - 2451545.0) / 36525;
     
     let M = oe.L + 36000.77 * T;
@@ -586,16 +588,21 @@ function createConstellations() {
         const points = [];
         
         constellation.stars.forEach(star => {
+            if (star.ra === undefined || star.dec === undefined) return;
             const ra = star.ra * (Math.PI / 12);
             const dec = star.dec * (Math.PI / 180);
             const x = scale * Math.cos(dec) * Math.cos(ra);
             const y = scale * Math.sin(dec) + offsetY;
             const z = scale * Math.cos(dec) * Math.sin(ra);
+            if (isNaN(x) || isNaN(y) || isNaN(z)) return;
             points.push(new THREE.Vector3(x, y, z));
         });
         
         for (let i = 0; i < points.length - 1; i++) {
-            const geometry = new THREE.BufferGeometry().setFromPoints([points[i], points[i+1]]);
+            if (!points[i] || !points[i+1]) continue;
+            const pts = [points[i], points[i+1]];
+            if (pts[0].x === undefined || pts[1].x === undefined) continue;
+            const geometry = new THREE.BufferGeometry().setFromPoints(pts);
             const material = new THREE.LineBasicMaterial({ 
                 color: 0x00ffff, 
                 transparent: true, 
