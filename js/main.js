@@ -278,36 +278,44 @@ function initTimeline() {
 }
 
 const celestialData = [
-    { name: "Mercury", size: 0.8, dist: 25, speed: 0.047, color: "#9e9e9e", incl: 7.0, texture: "textures/mercury.jpg" },
-    { name: "Venus", size: 1.5, dist: 40, speed: 0.035, color: "#e3bb76", incl: 3.4, texture: "textures/venus_surface.jpg" },
-    { name: "Earth", size: 1.6, dist: 60, speed: 0.029, color: "#2271b3", incl: 0, texture: "textures/earth_daymap.jpg", moons: [
+    { name: "Mercury", size: 0.8, dist: 25, speed: 0.047, period: 88, color: "#9e9e9e", incl: 7.0, texture: "textures/mercury.jpg" },
+    { name: "Venus", size: 1.5, dist: 40, speed: 0.035, period: 225, color: "#e3bb76", incl: 3.4, texture: "textures/venus_surface.jpg" },
+    { name: "Earth", size: 1.6, dist: 60, speed: 0.029, period: 365.25, color: "#2271b3", incl: 0, texture: "textures/earth_daymap.jpg", moons: [
         { name: "Moon", size: 0.4, dist: 4, speed: 0.8, texture: "textures/moon.jpg" }
     ]},
-    { name: "Mars", size: 1.2, dist: 80, speed: 0.024, color: "#e27b58", incl: 1.8, texture: "textures/mars.jpg", moons: [
+    { name: "Mars", size: 1.2, dist: 80, speed: 0.024, period: 687, color: "#e27b58", incl: 1.8, texture: "textures/mars.jpg", moons: [
         { name: "Phobos", size: 0.15, dist: 2.5, speed: 2.5, texture: "textures/phobos.jpg" },
         { name: "Deimos", size: 0.1, dist: 3.5, speed: 1.8, texture: "textures/phobos.jpg" }
     ]},
-    { name: "Jupiter", size: 4.5, dist: 130, speed: 0.013, color: "#d39c7e", incl: 1.3, texture: "textures/jupiter.jpg", moons: [
+    { name: "Jupiter", size: 4.5, dist: 130, speed: 0.013, period: 4333, color: "#d39c7e", incl: 1.3, texture: "textures/jupiter.jpg", moons: [
         { name: "Io", size: 0.3, dist: 7, speed: 2.0, texture: "textures/io.jpg" },
         { name: "Europa", size: 0.25, dist: 8.5, speed: 1.8, texture: "textures/europa.jpg" },
         { name: "Ganymede", size: 0.4, dist: 10.5, speed: 1.5, texture: "textures/ganymede.jpg" },
         { name: "Callisto", size: 0.35, dist: 13, speed: 1.2, texture: "textures/callisto.jpg" }
     ]},
-    { name: "Saturn", size: 3.8, dist: 180, speed: 0.009, color: "#c5ab6e", incl: 2.5, hasRings: true, texture: "textures/saturn.jpg", ringTexture: "textures/saturn_ring.png", moons: [
+    { name: "Saturn", size: 3.8, dist: 180, speed: 0.009, period: 10759, color: "#c5ab6e", incl: 2.5, hasRings: true, texture: "textures/saturn.jpg", ringTexture: "textures/saturn_ring.png", moons: [
         { name: "Titan", size: 0.4, dist: 9, speed: 1.2, texture: "textures/titan.jpg" },
         { name: "Enceladus", size: 0.2, dist: 11, speed: 1.8, texture: "textures/enceladus.jpg" }
     ]},
-    { name: "Uranus", size: 2.5, dist: 230, speed: 0.006, color: "#bbe1e4", incl: 0.8, texture: "textures/uranus.jpg", moons: [
+    { name: "Uranus", size: 2.5, dist: 230, speed: 0.006, period: 30687, color: "#bbe1e4", incl: 0.8, texture: "textures/uranus.jpg", moons: [
         { name: "Titania", size: 0.25, dist: 6, speed: 1.5, texture: "textures/titania.jpg" },
         { name: "Oberon", size: 0.25, dist: 7.5, speed: 1.3, texture: "textures/titania.jpg" }
     ]},
-    { name: "Neptune", size: 2.4, dist: 270, speed: 0.005, color: "#6081ff", incl: 1.8, texture: "textures/neptune.jpg", moons: [
+    { name: "Neptune", size: 2.4, dist: 270, speed: 0.005, period: 60190, color: "#6081ff", incl: 1.8, texture: "textures/neptune.jpg", moons: [
         { name: "Triton", size: 0.3, dist: 6, speed: 1.4, texture: "textures/triton.jpg" }
     ]},
-    { name: "Pluto", size: 0.6, dist: 310, speed: 0.004, color: "#937d64", incl: 17.2, texture: "textures/pluto.jpg", moons: [
+    { name: "Pluto", size: 0.6, dist: 310, speed: 0.004, period: 90560, color: "#937d64", incl: 17.2, texture: "textures/pluto.jpg", moons: [
         { name: "Charon", size: 0.2, dist: 2, speed: 2.0, texture: "textures/charon.jpg" }
     ]}
 ];
+
+const J2000 = new Date(Date.UTC(2000, 0, 1, 12, 0, 0));
+
+function getPlanetInitialAngle(period) {
+    const now = new Date();
+    const daysSinceJ2000 = (now - J2000) / (1000 * 60 * 60 * 24);
+    return (daysSinceJ2000 / period) * 2 * Math.PI;
+}
 
 const sunTextureUrl = "textures/sun.jpg";
 
@@ -432,9 +440,12 @@ function createPlanets() {
         orbitGroup.rotation.z = THREE.MathUtils.degToRad(data.incl);
         scene.add(orbitGroup);
 
+        const initialAngle = data.period ? getPlanetInitialAngle(data.period) : 0;
+        orbitGroup.rotation.y = initialAngle;
+
         const orbitLine = new THREE.Mesh(
             new THREE.TorusGeometry(data.dist, 0.08, 8, 160),
-            new THREE.MeshBasicMaterial({ color: 0x00f3ff, transparent: true, opacity: 0.15 })
+            new THREE.MeshBasicMaterial({ color: 0x00f3ff, transparent: true, opacity: 0.4 })
         );
         orbitLine.rotation.x = Math.PI / 2;
         orbitGroup.add(orbitLine);
@@ -620,7 +631,7 @@ function createConstellations() {
             const material = new THREE.LineBasicMaterial({ 
                 color: 0x00ffff, 
                 transparent: true, 
-                opacity: 0.15 
+                opacity: 0.4 
             });
             const line = new THREE.Line(geometry, material);
             scene.add(line);
@@ -757,12 +768,12 @@ function animate() {
     const baseVelocityFactor = 1.0; 
     const spd = parseFloat(uiElements.speedRange.value);
     let speedText;
-    if (spd >= 365) {
-        speedText = (spd / 365).toFixed(2) + 'y/s';
-    } else if (spd >= 1) {
-        speedText = spd.toFixed(1) + 'd/s';
+    if (spd >= 1) {
+        speedText = (spd).toFixed(1) + 'y/s';
+    } else if (spd >= 0.00274) {
+        speedText = '1:1';
     } else {
-        speedText = (spd * 10).toFixed(1) + 'd/10s';
+        speedText = (spd * 365).toFixed(2) + 'y/s';
     }
     uiElements.speedVal.innerText = speedText;
     const paused = uiElements.pauseRotation && uiElements.pauseRotation.checked;
@@ -773,12 +784,12 @@ function animate() {
     uiElements.aiPulse.style.color = keyPresent ? "var(--neon-cyan)" : "#666";
 
     if (!paused) {
-        timeCount += 0.01 * spd * baseVelocityFactor;
+        timeCount += spd * baseVelocityFactor;
         planets.forEach(p => {
             if (p.isMoon) return;
             if (!p.group) return;
             p.group.rotation.y += p.speed * spd * baseVelocityFactor;
-            p.mesh.rotation.y += 0.01 * spd * baseVelocityFactor;
+            p.mesh.rotation.y += p.speed * spd * baseVelocityFactor;
         });
     }
     
