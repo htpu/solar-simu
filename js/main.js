@@ -762,7 +762,7 @@ function animate() {
     }
     uiElements.speedVal.innerText = speedText;
     const paused = uiElements.pauseRotation && uiElements.pauseRotation.checked;
-    const trueScale = uiElements.trueScale.checked;
+    const trueScale = uiElements.trueScale && uiElements.trueScale.checked;
 
     const keyPresent = getActiveApiKey() !== "";
     uiElements.aiPulse.innerText = keyPresent ? "ON" : "OFF";
@@ -815,7 +815,7 @@ function animate() {
     planets.forEach(p => {
         const baseS = trueScale && p.mesh.userData.name !== "Sun" ? 0.4 : 1.0;
         p.mesh.scale.set(baseS, baseS, baseS);
-        if (p.orbitLine) p.orbitLine.visible = uiElements.showOrbits.checked;
+        if (p.orbitLine) p.orbitLine.visible = uiElements.showOrbits && uiElements.showOrbits.checked;
     });
 
     raycaster.setFromCamera(mouse, camera);
