@@ -81,11 +81,7 @@ canvas { display: block; }
     border: 1px solid rgba(0, 243, 255, 0.2);
 }
 
-.ui-panel-right, .ui-panel-left, .ui-panel-bottom {
-    display: none;
-}
-
-#panel-left, #panel-right, #panel-left-content {
+#panel-left, #panel-right, #panel-left-content, #panel-right-content, .ui-panel-bottom, .ui-panel-left, .ui-panel-right {
     display: none !important;
 }
 

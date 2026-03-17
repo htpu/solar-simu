@@ -2,7 +2,7 @@
 
 ## Project Overview
 - **Name**: 3D Solar System - AI Digital Twin
-- **Version**: 0.1.6
+- **Version**: 0.1.7
 - **Type**: Interactive 3D Web Application
 - **Core Functionality**: Real-time 3D visualization of the solar system with AI-powered planetary analysis via Gemini API
 - **Target Users**: Science enthusiasts, educators, students interested in astronomy

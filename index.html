@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Solar System - AI Digital Twin V0.1.6</title>
+    <title>3D Solar System - AI Digital Twin V0.1.7</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -24,7 +24,7 @@
     <div class="ui-panel-left glass-panel" id="panel-left">
         <div class="flex justify-between items-center mb-2">
             <h3>Celestial List</h3>
-            <span class="text-[9px] text-cyan-600">v0.1.6</span>
+            <span class="text-[9px] text-cyan-600">v0.1.7</span>
         </div>
         <div id="panel-left-content">
             <div id="index-list" class="mt-4">
@@ -145,31 +145,23 @@
         </div>
 
         <div class="mt-4 border-t border-cyan-900/50 pt-4">
-            <h3 class="text-[11px] mb-2">Neural Link Config</h3>
-            <input type="password" id="apiKeyInput" class="key-input" placeholder="Enter Gemini API Key...">
-            <div class="key-hint">
-                * Input your Gemini API Key to enable AI. Key stored only in session.<br>
+            <h3 class="text-[11px] mb-2">Neural Link</h3>
+            <div class="flex items-center gap-2 mb-2">
+                <div class="w-8 h-8 rounded-full border border-cyan-400 flex items-center justify-center bg-cyan-900/30">
+                    <span id="ai-pulse" class="animate-pulse font-bold text-[10px]">OFF</span>
+                </div>
+                <span class="text-[10px] italic text-gray-300" id="ai-status">AI Systems Offline</span>
             </div>
+            <input type="password" id="apiKeyInput" class="key-input" placeholder="Enter Gemini API Key...">
+            <div class="key-hint">* Input API Key to enable AI</div>
+            <div class="flex gap-2 mt-2">
+                <button id="ai-intel-btn" class="ai-btn flex-1" onclick="generateDetailedIntel()">✨ SCAN</button>
+                <button id="audio-btn" class="ai-btn bg-gray-800 hidden" onclick="toggleAudio()">🔊</button>
+            </div>
+            <div id="ai-detailed-box" class="hidden mt-2 pt-2 border-t border-cyan-900/50 text-[10px] text-gray-400 max-h-20 overflow-y-auto leading-relaxed"></div>
         </div>
 
         <button class="ai-btn w-full mt-4" onclick="resetView()">🏠 RESET VIEW</button>
-    </div>
-
-    <div class="ui-panel-bottom glass-panel">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full border border-cyan-400 flex items-center justify-center bg-cyan-900/30">
-                <span id="ai-pulse" class="animate-pulse font-bold text-xs">OFF</span>
-            </div>
-            <div class="flex-1">
-                <div class="text-[9px] text-cyan-400 uppercase tracking-widest font-bold">Mission Science Officer</div>
-                <div id="ai-status" class="text-sm text-gray-200 h-10 overflow-hidden italic leading-tight">"AI Systems Offline. Authentication Key Required."</div>
-            </div>
-            <div class="flex gap-2">
-                <button id="ai-intel-btn" class="ai-btn" onclick="generateDetailedIntel()">✨ SCAN DATA</button>
-                <button id="audio-btn" class="ai-btn bg-gray-800" style="display:none" onclick="toggleAudio()">🔊</button>
-            </div>
-        </div>
-        <div id="ai-detailed-box" class="hidden mt-2 pt-2 border-t border-cyan-900/50 text-[11px] text-gray-400 max-h-24 overflow-y-auto leading-relaxed"></div>
     </div>
 
     <script src="js/main.js"></script>
