@@ -540,7 +540,7 @@ const constellations = [
             { ra: 0.95, dec: 60.7 },
             { ra: 1.43, dec: 60.2 },
             { ra: 1.91, dec: 60.7 },
-            { ra: 2.29, desc: 60.5 },
+            { ra: 2.29, dec: 60.5 },
             { ra: 2.84, dec: 60.2 }
         ]
     },
