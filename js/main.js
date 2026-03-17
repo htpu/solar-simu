@@ -756,9 +756,13 @@ function animate() {
 
     const baseVelocityFactor = 1.0; 
     const spd = parseFloat(uiElements.speedRange.value);
-    let speedText = spd + 'x';
+    let speedText;
     if (spd >= 365) {
-        speedText = (spd / 365).toFixed(1) + 'y/s';
+        speedText = (spd / 365).toFixed(2) + 'y/s';
+    } else if (spd >= 1) {
+        speedText = spd.toFixed(1) + 'd/s';
+    } else {
+        speedText = (spd * 10).toFixed(1) + 'd/10s';
     }
     uiElements.speedVal.innerText = speedText;
     const paused = uiElements.pauseRotation && uiElements.pauseRotation.checked;
