@@ -1,0 +1,82 @@
+:root {
+    --neon-cyan: #00f3ff;
+    --neon-blue: #0066ff;
+    --neon-purple: #bc13fe;
+    --panel-bg: rgba(5, 10, 20, 0.95);
+}
+body { margin: 0; overflow: hidden; background-color: #000; font-family: 'Share Tech Mono', monospace; color: #fff; }
+canvas { display: block; }
+
+.glass-panel {
+    background: var(--panel-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 243, 255, 0.2);
+}
+
+.ui-panel-right {
+    position: absolute; top: 20px; right: 20px;
+    width: 320px; padding: 18px; z-index: 100;
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
+}
+
+.ui-panel-left {
+    position: absolute; top: 20px; left: 20px;
+    width: 200px; padding: 15px; z-index: 100;
+    max-height: 80vh; overflow-y: auto;
+}
+
+.ui-panel-bottom {
+    position: absolute; bottom: 20px; left: 50%;
+    transform: translateX(-50%);
+    width: 800px; max-width: 90vw; padding: 15px; z-index: 100;
+    display: flex; flex-direction: column; gap: 8px;
+}
+
+h2, h3 { font-family: 'Orbitron', sans-serif; text-transform: uppercase; letter-spacing: 2px; color: var(--neon-cyan); }
+h2 { border-bottom: 2px solid var(--neon-cyan); margin-bottom: 15px; padding-bottom: 5px; font-size: 16px; }
+
+.btn-sci {
+    background: rgba(0, 243, 255, 0.05);
+    border: 1px solid rgba(0, 243, 255, 0.3);
+    padding: 6px 10px; cursor: pointer; transition: all 0.2s;
+    font-size: 10px; text-transform: uppercase; width: 100%;
+    margin-bottom: 4px; display: block; text-align: left;
+}
+.btn-sci:hover, .btn-sci.active { background: var(--neon-cyan); color: #000; box-shadow: 0 0 10px var(--neon-cyan); }
+
+.ai-btn {
+    background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+    color: white; border: none; padding: 8px; border-radius: 4px;
+    cursor: pointer; font-size: 11px; letter-spacing: 1px;
+}
+
+#planet-tooltip {
+    position: absolute; display: none; pointer-events: none;
+    background: rgba(0, 10, 20, 0.95); border: 1px solid var(--neon-cyan);
+    padding: 12px; z-index: 200; width: 220px;
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+}
+#planet-tooltip::after {
+    content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+    background: var(--neon-cyan); animation: scanline 4s linear infinite; opacity: 0.4;
+}
+@keyframes scanline { 0% { top: 0; } 100% { top: 100%; } }
+
+.tooltip-label { font-size: 9px; color: var(--neon-cyan); opacity: 0.7; }
+.tooltip-val { font-size: 14px; font-family: 'Orbitron'; margin-bottom: 4px; }
+
+.toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+input[type=range] { accent-color: var(--neon-cyan); width: 100%; margin-top: 4px; }
+
+.key-input {
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(0,243,255,0.3);
+    color: var(--neon-cyan);
+    padding: 8px; font-size: 11px; width: 100%;
+    margin-top: 5px; outline: none; transition: all 0.3s;
+}
+.key-input:focus { border: 1px solid var(--neon-cyan); box-shadow: 0 0 15px rgba(0,243,255,0.4); }
+.key-input.error-glow { border-color: #ff4b2b; box-shadow: 0 0 20px rgba(255, 75, 43, 0.6); animation: pulse-red 1s infinite alternate; }
+@keyframes pulse-red { from { box-shadow: 0 0 5px rgba(255,0,0,0.2); } to { box-shadow: 0 0 20px rgba(255,0,0,0.6); } }
+.key-hint { font-size: 9px; color: #888; margin-top: 4px; line-height: 1.2; }
