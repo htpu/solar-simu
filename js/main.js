@@ -740,9 +740,13 @@ function animate() {
     requestAnimationFrame(animate);
     if (!uiElements.speedRange) return;
 
-    const baseVelocityFactor = 0.25; 
+    const baseVelocityFactor = 1.0; 
     const spd = parseFloat(uiElements.speedRange.value);
-    uiElements.speedVal.innerText = spd.toFixed(1) + 'x';
+    let speedText = spd + 'x';
+    if (spd >= 365) {
+        speedText = (spd / 365).toFixed(1) + 'y/s';
+    }
+    uiElements.speedVal.innerText = speedText;
     const paused = uiElements.pauseRotation.checked;
     const trueScale = uiElements.trueScale.checked;
 
