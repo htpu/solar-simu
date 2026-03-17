@@ -184,6 +184,66 @@ solar-simu/
 - Modern browsers with WebGL support
 - Tested on: Chrome, Firefox, Safari, Edge
 
+## Deployment
+
+### GitHub Pages Setup
+```bash
+# 1. Initialize git and commit
+git init
+git add .
+git commit -m "Initial commit"
+
+# 2. Create public repo on GitHub
+gh repo create solar-simu --public --source=. --clone=false
+
+# 3. Add remote and push
+git remote add origin https://github.com/htpu/solar-simu.git
+git push -u origin main
+
+# 4. Enable GitHub Pages (via API)
+gh api repos/htpu/solar-simu/pages -X POST -F 'source[branch]=main' -F 'source[path]=/'
+```
+
+### DNS Configuration (AWS Route 53)
+```bash
+# Get hosted zone ID
+aws route53 list-hosted-zones --query 'HostedZones[?Name==`htpu.net.`].Id'
+
+# Create CNAME record
+aws route53 change-resource-record-sets --hosted-zone-id Z11AW9Y2TX4DU6 --change-batch file://dns.json
+```
+
+dns.json:
+```json
+{
+  "Changes": [{
+    "Action": "CREATE",
+    "ResourceRecordSet": {
+      "Name": "solar.htpu.net",
+      "Type": "CNAME",
+      "TTL": 300,
+      "ResourceRecords": [{ "Value": "htpu.github.io" }]
+    }
+  }]
+}
+```
+
+### URLs
+- **GitHub Pages**: https://htpu.github.io/solar-simu/
+- **Custom Domain**: http://solar.htpu.net (HTTPS pending certificate provisioning)
+
+### Commands Summary
+```bash
+# Deploy updates
+git add . && git commit -m "Update" && git push origin main
+
+# Check deployment status
+gh api repos/htpu/solar-simu/pages
+
+# Check DNS
+dig solar.htpu.net
+```
+
 ## Known Limitations
 - External textures require CORS-enabled hosting (works on GitHub Pages)
 - No mobile touch controls
