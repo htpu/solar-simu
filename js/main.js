@@ -780,12 +780,11 @@ function animate() {
         
         const jd = julianDate(currentDate);
         planets.forEach(p => {
-            if (p.isMoon || p.mesh.userData.name === 'Sun') return;
+            if (p.isMoon) return;
             if (!p.group) return;
+            if (p.mesh.userData.name === 'Sun') return;
             const pos = calculatePlanetPosition(p.mesh.userData.name, jd);
-            if (isNaN(pos.x) || isNaN(pos.z)) return;
-            const dist = p.mesh.userData.dist;
-            if (dist > 0) {
+            if (pos && !isNaN(pos.x) && !isNaN(pos.z)) {
                 const angle = Math.atan2(pos.z, pos.x);
                 p.group.rotation.y = angle;
             }
@@ -794,12 +793,11 @@ function animate() {
     } else if (timelineMode === 'manual') {
         const jd = julianDate(currentDate);
         planets.forEach(p => {
-            if (p.isMoon || p.mesh.userData.name === 'Sun') return;
+            if (p.isMoon) return;
             if (!p.group) return;
+            if (p.mesh.userData.name === 'Sun') return;
             const pos = calculatePlanetPosition(p.mesh.userData.name, jd);
-            if (isNaN(pos.x) || isNaN(pos.z)) return;
-            const dist = p.mesh.userData.dist;
-            if (dist > 0) {
+            if (pos && !isNaN(pos.x) && !isNaN(pos.z)) {
                 const angle = Math.atan2(pos.z, pos.x);
                 p.group.rotation.y = angle;
             }
@@ -808,11 +806,13 @@ function animate() {
     } else {
         planets.forEach(p => {
             if (p.isMoon) return;
+            if (!p.group) return;
             p.mesh.rotation.y += 0.001;
         });
     }
-
+    
     planets.forEach(p => {
+        if (!p.mesh) return;
         const baseS = trueScale && p.mesh.userData.name !== "Sun" ? 0.4 : 1.0;
         p.mesh.scale.set(baseS, baseS, baseS);
         if (p.orbitLine) p.orbitLine.visible = uiElements.showOrbits && uiElements.showOrbits.checked;
