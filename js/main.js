@@ -40,7 +40,7 @@ const astronomicalEvents = [
     { year: 2015, month: 7, day: 14, name: "New Horizons: Pluto flyby", type: "spacecraft" },
     { year: 2019, month: 1, day: 1, name: "Voyager 2: Interstellar", type: "spacecraft" },
     { year: 2020, month: 7, day: 30, name: "Perseverance launch", type: "spacecraft" },
-    { year: 2021, month: 2, 18, name: "Perseverance: Mars flight", type: "spacecraft" },
+    { year: 2021, month: 2, day: 18, name: "Perseverance: Mars flight", type: "spacecraft" },
 ];
 
 const orbitalElements = {

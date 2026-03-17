@@ -11,7 +11,43 @@
 - **UI Framework**: Tailwind CSS (via CDN)
 - **Fonts**: Orbitron (headings), Share Tech Mono (body)
 - **Deployment**: GitHub Pages (solar.htpu.net)
-- **Textures**: three.js examples (raw.githubusercontent.com)
+- **Textures**: Local textures in `textures/` directory
+
+## File Structure
+```
+solar-simu/
+├── index.html          # Main HTML
+├── CNAME              # Custom domain (solar.htpu.net)
+├── AGENTS.md          # Agent rules for development
+├── SPEC.md            # This specification
+├── js/
+│   └── main.js        # JavaScript logic
+├── css/
+│   └── styles.css     # All CSS styles
+└── textures/          # Planet and moon textures
+    ├── sun.jpg
+    ├── mercury.jpg
+    ├── venus_surface.jpg
+    ├── earth_daymap.jpg
+    ├── moon.jpg
+    ├── mars.jpg
+    ├── phobos.jpg
+    ├── jupiter.jpg
+    ├── io.jpg
+    ├── europa.jpg
+    ├── ganymede.jpg
+    ├── callisto.jpg
+    ├── saturn.jpg
+    ├── saturn_ring.png
+    ├── titan.jpg
+    ├── enceladus.jpg
+    ├── uranus.jpg
+    ├── titania.jpg
+    ├── neptune.jpg
+    ├── triton.jpg
+    ├── pluto.jpg
+    └── charon.jpg
+```
 
 ## UI/UX Specification
 
