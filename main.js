@@ -114,6 +114,7 @@ function init() {
 
     createStars();
     createMilkyWay();
+    createConstellations();
     createSun();
     createPlanets();
     populateIndex();
@@ -218,13 +219,164 @@ function createStars() {
 
 function createMilkyWay() {
     const geo = new THREE.BufferGeometry();
-    const pos = new Float32Array(30000 * 3);
-    for (let i = 0; i < 30000; i++) {
-        const a = Math.random()*Math.PI*2; const r = 1500 + Math.random()*3000;
-        pos[i*3] = Math.cos(a)*r; pos[i*3+1] = (Math.random()-0.5)*500; pos[i*3+2] = Math.sin(a)*r;
+    const pos = new Float32Array(50000 * 3);
+    const colors = new Float32Array(50000 * 3);
+    
+    for (let i = 0; i < 50000; i++) {
+        const a = Math.random() * Math.PI * 2;
+        const r = 800 + Math.random() * 3500;
+        const y = (Math.random() - 0.5) * 200;
+        pos[i*3] = Math.cos(a) * r;
+        pos[i*3+1] = y;
+        pos[i*3+2] = Math.sin(a) * r;
+        
+        const brightness = 0.3 + Math.random() * 0.7;
+        colors[i*3] = brightness * 0.9;
+        colors[i*3+1] = brightness * 0.85;
+        colors[i*3+2] = brightness;
     }
+    
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    scene.add(new THREE.Points(geo, new THREE.PointsMaterial({ color: 0x3355ff, size: 2, transparent: true, opacity: 0.1 })));
+    geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    
+    const milkyWay = new THREE.Points(geo, new THREE.PointsMaterial({ 
+        size: 2.5, 
+        vertexColors: true, 
+        transparent: true, 
+        opacity: 0.6 
+    }));
+    milkyWay.rotation.x = Math.PI / 2;
+    scene.add(milkyWay);
+}
+
+const constellations = [
+    {
+        name: "ORION",
+        stars: [
+            { ra: 5.55, dec: -1.2 },
+            { ra: 5.53, dec: -1.9 },
+            { ra: 5.42, dec: -0.3 },
+            { ra: 5.68, dec: 0.4 },
+            { ra: 5.63, dec: -0.5 },
+            { ra: 5.78, dec: -0.3 },
+            { ra: 5.73, dec: -1.2 }
+        ]
+    },
+    {
+        name: "URSA MAJOR",
+        stars: [
+            { ra: 11.06, dec: 61.8 },
+            { ra: 11.03, dec: 56.5 },
+            { ra: 12.26, dec: 57.0 },
+            { ra: 12.56, dec: 55.9 },
+            { ra: 13.40, dec: 54.9 },
+            { ra: 13.80, dec: 49.3 },
+            { ra: 14.28, dec: 46.0 }
+        ]
+    },
+    {
+        name: "CASSIOPEIA",
+        stars: [
+            { ra: 0.95, dec: 60.7 },
+            { ra: 1.43, dec: 60.2 },
+            { ra: 1.91, dec: 60.7 },
+            { ra: 2.29, desc: 60.5 },
+            { ra: 2.84, dec: 60.2 }
+        ]
+    },
+    {
+        name: "SCORPIUS",
+        stars: [
+            { ra: 16.49, dec: -26.4 },
+            { ra: 16.09, dec: -19.8 },
+            { ra: 15.58, dec: -19.8 },
+            { ra: 15.63, dec: -22.6 },
+            { ra: 15.72, dec: -25.4 },
+            { ra: 15.99, dec: -27.1 }
+        ]
+    },
+    {
+        name: "LEO",
+        stars: [
+            { ra: 10.67, dec: -7.7 },
+            { ra: 10.85, dec: -6.3 },
+            { ra: 11.23, dec: -6.4 },
+            { ra: 11.28, dec: -8.4 },
+            { ra: 11.43, dec: -14.8 },
+            { ra: 11.52, dec: -14.0 }
+        ]
+    },
+    {
+        name: "CYGNUS",
+        stars: [
+            { ra: 20.37, dec: 45.1 },
+            { ra: 20.77, dec: 42.0 },
+            { ra: 20.62, dec: 40.3 },
+            { ra: 20.53, dec: 37.3 },
+            { ra: 20.12, dec: 36.0 }
+        ]
+    }
+];
+
+function createConstellations() {
+    const scale = 4000;
+    const offsetY = 1500;
+    
+    constellations.forEach(constellation => {
+        const points = [];
+        
+        constellation.stars.forEach(star => {
+            const ra = star.ra * (Math.PI / 12);
+            const dec = star.dec * (Math.PI / 180);
+            const x = scale * Math.cos(dec) * Math.cos(ra);
+            const y = scale * Math.sin(dec) + offsetY;
+            const z = scale * Math.cos(dec) * Math.sin(ra);
+            points.push(new THREE.Vector3(x, y, z));
+        });
+        
+        for (let i = 0; i < points.length - 1; i++) {
+            const geometry = new THREE.BufferGeometry().setFromPoints([points[i], points[i+1]]);
+            const material = new THREE.LineBasicMaterial({ 
+                color: 0x00ffff, 
+                transparent: true, 
+                opacity: 0.15 
+            });
+            const line = new THREE.Line(geometry, material);
+            scene.add(line);
+        }
+        
+        const firstStar = points[0];
+        const canvas = document.createElement('canvas');
+        canvas.width = 256;
+        canvas.height = 64;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#00ffff';
+        ctx.font = 'bold 32px Orbitron, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(constellation.name, 128, 40);
+        
+        const texture = new THREE.CanvasTexture(canvas);
+        const spriteMaterial = new THREE.SpriteMaterial({ 
+            map: texture, 
+            transparent: true, 
+            opacity: 0.7 
+        });
+        const sprite = new THREE.Sprite(spriteMaterial);
+        
+        let centerX = 0, centerY = 0, centerZ = 0;
+        points.forEach(p => {
+            centerX += p.x;
+            centerY += p.y;
+            centerZ += p.z;
+        });
+        sprite.position.set(
+            centerX / points.length + 100,
+            centerY / points.length + 50,
+            centerZ / points.length
+        );
+        sprite.scale.set(400, 100, 1);
+        scene.add(sprite);
+    });
 }
 
 function populateIndex() {
