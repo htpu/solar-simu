@@ -826,4 +826,16 @@ function animate() {
     renderer.render(scene, camera);
 }
 
+function togglePanel(side) {
+    const panel = document.getElementById('panel-' + side);
+    const content = document.getElementById('panel-' + side + '-content');
+    if (panel.classList.contains('collapsed')) {
+        panel.classList.remove('collapsed');
+        if (content) content.style.display = 'block';
+    } else {
+        panel.classList.add('collapsed');
+        if (content) content.style.display = 'none';
+    }
+}
+
 window.onload = init;

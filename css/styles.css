@@ -123,12 +123,22 @@ input[type=range] { accent-color: var(--neon-cyan); width: 100%; margin-top: 4px
         overflow-y: auto;
     }
     
+    .ui-panel-right.collapsed {
+        max-height: 40px;
+        overflow: hidden;
+    }
+    
     .ui-panel-left {
         width: calc(100% - 40px);
         left: 10px;
         top: auto;
         bottom: 10px;
         max-height: 30vh;
+    }
+    
+    .ui-panel-left.collapsed {
+        max-height: 40px;
+        overflow: hidden;
     }
     
     .ui-panel-bottom {
@@ -146,4 +156,36 @@ input[type=range] { accent-color: var(--neon-cyan); width: 100%; margin-top: 4px
     
     .tooltip-val { font-size: 12px; }
     .tooltip-label { font-size: 8px; }
+    
+    .mobile-toggle {
+        display: flex;
+        position: fixed;
+        width: 40px;
+        height: 40px;
+        background: var(--panel-bg);
+        border: 1px solid var(--neon-cyan);
+        color: var(--neon-cyan);
+        font-size: 20px;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 200;
+        border-radius: 50%;
+    }
+    
+    .mobile-toggle-left {
+        left: 10px;
+        bottom: calc(30vh + 20px);
+    }
+    
+    .mobile-toggle-right {
+        right: 10px;
+        top: 10px;
+    }
+}
+
+@media (min-width: 769px) {
+    .mobile-toggle {
+        display: none;
+    }
 }
