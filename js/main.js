@@ -202,22 +202,11 @@ function initTimeline() {
         updateFromDate();
     });
     
-    document.getElementById('timeline-prev').addEventListener('click', () => {
-        timelineMode = 'manual';
-        currentDate.setDate(currentDate.getDate() - 1);
-        updateFromDate();
-    });
-    
-    document.getElementById('timeline-next').addEventListener('click', () => {
-        timelineMode = 'manual';
-        currentDate.setDate(currentDate.getDate() + 1);
-        updateFromDate();
-    });
-    
     const track = document.getElementById('timeline-track');
     let isDragging = false;
     
-    track.addEventListener('mousedown', (e) => {
+    if (track) {
+        track.addEventListener('mousedown', (e) => {
         isDragging = true;
         timelineMode = 'manual';
         handleTimelineClick(e);
@@ -230,6 +219,7 @@ function initTimeline() {
     document.addEventListener('mouseup', () => {
         isDragging = false;
     });
+    }
     
     function handleTimelineClick(e) {
         timelineMode = 'manual';
