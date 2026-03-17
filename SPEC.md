@@ -2,6 +2,7 @@
 
 ## Project Overview
 - **Name**: 3D Solar System - AI Digital Twin
+- **Version**: 0.0.5
 - **Type**: Interactive 3D Web Application
 - **Core Functionality**: Real-time 3D visualization of the solar system with AI-powered planetary analysis via Gemini API
 - **Target Users**: Science enthusiasts, educators, students interested in astronomy
@@ -84,12 +85,18 @@ solar-simu/
    - Toggle: System pause
    - API Key input field
    - Recenter view button
-4. **AI Panel**:
-   - Status indicator (ON/OFF pulse)
-   - Mission Science Officer label
-   - AI status text
-   - Scan Data button
-   - Audio playback button
+ 4. **AI Panel**:
+    - Status indicator (ON/OFF pulse)
+    - Mission Science Officer label
+    - AI status text
+    - Scan Data button
+    - Audio playback button
+ 5. **Timeline Panel**:
+    - Date/time display (YYYY-MM-DD HH:MM:SS)
+    - Timeline slider (years 1-3000)
+    - Year/Month/Day/Hour/Minute selectors
+    - Astronomical event markers
+    - Event list with click navigation
 
 ## Celestial Objects
 
@@ -99,18 +106,18 @@ solar-simu/
 - Position: Origin (0, 0, 0)
 - Light source: PointLight(0xffffff, 2.5, 6000)
 
-### Planets
-| Planet   | Size | Distance | Orbital Speed | Inclination | Rings |
-|----------|------|----------|---------------|-------------|-------|
-| Mercury  | 0.8  | 25       | 0.047         | 7.0°       | No    |
-| Venus    | 1.5  | 40       | 0.035         | 3.4°       | No    |
-| Earth    | 1.6  | 60       | 0.029         | 0°         | No    |
-| Mars     | 1.2  | 80       | 0.024         | 1.8°       | No    |
-| Jupiter  | 4.5  | 130      | 0.013         | 1.3°       | No    |
-| Saturn   | 3.8  | 180      | 0.009         | 2.5°       | Yes   |
-| Uranus   | 2.5  | 230      | 0.006         | 0.8°       | No    |
-| Neptune  | 2.4  | 270      | 0.005         | 1.8°       | No    |
-| Pluto    | 0.6  | 310      | 0.004         | 17.2°      | No    |
+### Planets & Moons
+| Planet   | Size | Distance | Orbital Speed | Inclination | Rings | Moons |
+|----------|------|----------|---------------|-------------|-------|-------|
+| Mercury  | 0.8  | 25       | 0.047         | 7.0°       | No    | -     |
+| Venus    | 1.5  | 40       | 0.035         | 3.4°       | No    | -     |
+| Earth    | 1.6  | 60       | 0.029         | 0°         | No    | Moon  |
+| Mars     | 1.2  | 80       | 0.024         | 1.8°       | No    | Phobos, Deimos |
+| Jupiter  | 4.5  | 130      | 0.013         | 1.3°       | No    | Io, Europa, Ganymede, Callisto |
+| Saturn   | 3.8  | 180      | 0.009         | 2.5°       | Yes   | Titan, Enceladus |
+| Uranus   | 2.5  | 230      | 0.006         | 0.8°       | No    | Titania, Oberon |
+| Neptune  | 2.4  | 270      | 0.005         | 1.8°       | No    | Triton |
+| Pluto    | 0.6  | 310      | 0.004         | 17.2°      | No    | Charon |
 
 ### Orbital Visualization
 - Geometry: TorusGeometry(dist, 0.08, 8, 160)
@@ -118,7 +125,8 @@ solar-simu/
 
 ### Background
 - **Stars**: 12,000 particles, BufferGeometry, white (#ffffff), size 1.2
-- **Milky Way**: 30,000 particles, disk distribution (radius 1500-4500), blue (#3355ff), opacity 0.1
+- **Milky Way**: 50,000 particles, disk distribution (radius 800-4300), blue-white colors, opacity 0.6
+- **Constellations**: 6 major constellations (Orion, Ursa Major, Cassiopeia, Scorpius, Leo, Cygnus) with lines and labels
 
 ## Functionality Specification
 
@@ -201,12 +209,15 @@ TTS:  https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-p
 ## File Structure
 ```
 solar-simu/
-├── index.html      # Main HTML with UI structure
-├── styles.css      # All CSS styles
-├── main.js         # JavaScript logic (Three.js, AI)
-├── shaders.js      # GLSL shaders (currently unused)
-├── AGENTS.md      # Agent rules for development
-└── SPEC.md        # This specification
+├── index.html          # Main HTML with UI structure
+├── CNAME              # Custom domain (solar.htpu.net)
+├── AGENTS.md          # Agent rules for development
+├── SPEC.md            # This specification
+├── js/
+│   └── main.js        # JavaScript logic (Three.js, AI, Timeline)
+├── css/
+│   └── styles.css     # All CSS styles
+└── textures/          # Planet and moon textures
 ```
 
 ## External Dependencies
@@ -215,6 +226,20 @@ solar-simu/
 - Tailwind: https://cdn.tailwindcss.com
 - Fonts: Google Fonts (Orbitron, Share Tech Mono)
 - Textures: raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/
+
+## Timeline Functionality
+- **Date Range**: Year 1 to Year 3000
+- **Precision**: Year, Month, Day, Hour, Minute selectors
+- **Modes**: Manual (user-selected date) and Auto (continuous animation)
+- **Astronomical Events**: 27 famous events marked on timeline (clickable)
+  - Supernovae (1054, 1572)
+  - Planet discoveries (1781, 1846)
+  - Space missions (1957-present)
+- **Planet Position Calculation**: Uses Kepler's orbital elements
+  - Semi-major axis (a), Eccentricity (e), Inclination (i)
+  - Mean longitude (L), Argument of perihelion (w), Longitude of ascending node (node)
+  - Solve Kepler's equation iteratively for accurate positions
+- **Julian Date**: Used for astronomical calculations
 
 ## Browser Support
 - Modern browsers with WebGL support
