@@ -783,12 +783,17 @@ function animate() {
         const yearsElapsed = spd * baseVelocityFactor * secondsPerFrame;
         currentDate.setFullYear(currentDate.getFullYear() + yearsElapsed);
         
+        if (currentDate.getFullYear() > 3000) currentDate.setFullYear(3000);
+        if (currentDate.getFullYear() < 1) currentDate.setFullYear(1);
+        
         updateTimelineUI();
         
         const jd = julianDate(currentDate);
         planets.forEach(p => {
             if (p.isMoon || p.mesh.userData.name === 'Sun') return;
+            if (!p.group) return;
             const pos = calculatePlanetPosition(p.mesh.userData.name, jd);
+            if (isNaN(pos.x) || isNaN(pos.z)) return;
             const dist = p.mesh.userData.dist;
             if (dist > 0) {
                 const angle = Math.atan2(pos.z, pos.x);
@@ -800,7 +805,9 @@ function animate() {
         const jd = julianDate(currentDate);
         planets.forEach(p => {
             if (p.isMoon || p.mesh.userData.name === 'Sun') return;
+            if (!p.group) return;
             const pos = calculatePlanetPosition(p.mesh.userData.name, jd);
+            if (isNaN(pos.x) || isNaN(pos.z)) return;
             const dist = p.mesh.userData.dist;
             if (dist > 0) {
                 const angle = Math.atan2(pos.z, pos.x);
