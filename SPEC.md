@@ -1,0 +1,191 @@
+# 3D Solar System Visualization - Specification
+
+## Project Overview
+- **Name**: 3D Solar System - AI Digital Twin
+- **Type**: Interactive 3D Web Application
+- **Core Functionality**: Real-time 3D visualization of the solar system with AI-powered planetary analysis via Gemini API
+- **Target Users**: Science enthusiasts, educators, students interested in astronomy
+
+## Technical Stack
+- **Rendering**: Three.js r128
+- **UI Framework**: Tailwind CSS (via CDN)
+- **Fonts**: Orbitron (headings), Share Tech Mono (body)
+- **Deployment**: GitHub Pages (solar.htpu.net)
+- **Textures**: three.js examples (raw.githubusercontent.com)
+
+## UI/UX Specification
+
+### Layout Structure
+- **Left Panel** (Celestial List): Fixed position, 200px width, scrollable
+- **Right Panel** (Command Center): Fixed position, 320px width, controls
+- **Bottom Panel** (AI Interface): Fixed position, centered, 800px max-width
+- **Canvas**: Full viewport, z-index 0
+
+### Visual Design
+- **Color Palette**:
+  - Primary: `#00f3ff` (neon cyan)
+  - Secondary: `#0066ff` (neon blue)
+  - Accent: `#bc13fe` (neon purple)
+  - Background: `#000000` (black)
+  - Panel BG: `rgba(5, 10, 20, 0.95)`
+- **Typography**:
+  - Headings: Orbitron, 16px, uppercase, letter-spacing 2px
+  - Body: Share Tech Mono, monospace
+  - Tooltips: 9-14px
+- **Effects**:
+  - Glassmorphism panels with backdrop blur (12px)
+  - Neon glow on hover (box-shadow)
+  - Scanline animation on tooltips
+  - Planet pulse animation on hover
+
+### Components
+1. **Planet Tooltip**: Floating card showing name, orbital position (AU), status
+2. **Celestial List**: Scrollable list with clickable planet buttons
+3. **Command Center**:
+   - Time rate slider (0-10x)
+   - Toggle: Render orbits
+   - Toggle: Scientific scale
+   - Toggle: System pause
+   - API Key input field
+   - Recenter view button
+4. **AI Panel**:
+   - Status indicator (ON/OFF pulse)
+   - Mission Science Officer label
+   - AI status text
+   - Scan Data button
+   - Audio playback button
+
+## Celestial Objects
+
+### Sun
+- Geometry: SphereGeometry(20, 64, 64)
+- Material: MeshBasicMaterial with texture
+- Position: Origin (0, 0, 0)
+- Light source: PointLight(0xffffff, 2.5, 6000)
+
+### Planets
+| Planet   | Size | Distance | Orbital Speed | Inclination | Rings |
+|----------|------|----------|---------------|-------------|-------|
+| Mercury  | 0.8  | 25       | 0.047         | 7.0°       | No    |
+| Venus    | 1.5  | 40       | 0.035         | 3.4°       | No    |
+| Earth    | 1.6  | 60       | 0.029         | 0°         | No    |
+| Mars     | 1.2  | 80       | 0.024         | 1.8°       | No    |
+| Jupiter  | 4.5  | 130      | 0.013         | 1.3°       | No    |
+| Saturn   | 3.8  | 180      | 0.009         | 2.5°       | Yes   |
+| Uranus   | 2.5  | 230      | 0.006         | 0.8°       | No    |
+| Neptune  | 2.4  | 270      | 0.005         | 1.8°       | No    |
+| Pluto    | 0.6  | 310      | 0.004         | 17.2°      | No    |
+
+### Orbital Visualization
+- Geometry: TorusGeometry(dist, 0.08, 8, 160)
+- Material: MeshBasicMaterial, cyan (#00f3ff), opacity 0.15
+
+### Background
+- **Stars**: 12,000 particles, BufferGeometry, white (#ffffff), size 1.2
+- **Milky Way**: 30,000 particles, disk distribution (radius 1500-4500), blue (#3355ff), opacity 0.1
+
+## Functionality Specification
+
+### Camera Controls
+- Type: PerspectiveCamera(45, aspect, 0.1, 20000)
+- Initial position: (0, 450, 900)
+- Controls: OrbitControls with damping
+- Zoom limits: Default Three.js OrbitControls
+
+### Interaction
+1. **Hover**: Raycasting to detect planet under cursor
+   - Show tooltip with planet info
+   - Pulse animation on hovered planet
+   - Update AI status text
+2. **Click**: Set target object for camera tracking
+3. **List Click**: Jump to specific planet
+4. **Drag**: Rotate camera around scene
+5. **Scroll**: Zoom in/out
+
+### Time Control
+- Base velocity factor: 0.25
+- Speed range: 0-10x
+- Planets rotate around sun based on orbital speed
+- Planets also rotate on their own axis
+
+### AI Features (Gemini API)
+- **Text Generation**: gemini-2.5-flash-preview-09-2025
+  - Generates 100-word science briefing for selected planet
+- **TTS**: gemini-2.5-flash-preview-tts
+  - Voice: Charon
+  - Audio format: WAV (24kHz, 16-bit, mono)
+  - Playback via Web Audio API
+
+### Toggles
+- **Render Orbits**: Show/hide orbital paths
+- **Scientific Scale**: Reduce planet size to 0.4x for visibility
+- **System Pause**: Freeze all animation
+
+## Animation Specifications
+- Render loop: requestAnimationFrame
+- Camera tracking: lerp with factor 0.08 (target), 0.04 (position)
+- Hover pulse: sin wave, amplitude 0.05, frequency 0.005
+- Tooltip position: Follows mouse with offset
+
+## API Integration
+
+### Gemini API Endpoints
+```
+Text: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent
+TTS:  https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent
+```
+
+### Request Format (Text)
+```json
+{
+  "contents": [{
+    "parts": [{
+      "text": "High-level science briefing about {planet}. 100 words. English."
+    }]
+  }]
+}
+```
+
+### Request Format (TTS)
+```json
+{
+  "contents": [{ "parts": [{ "text": "{previous_text}" }] }],
+  "generationConfig": {
+    "responseModalities": ["AUDIO"],
+    "speechConfig": {
+      "voiceConfig": {
+        "prebuiltVoiceConfig": { "voiceName": "Charon" }
+      }
+    }
+  },
+  "model": "gemini-2.5-flash-preview-tts"
+}
+```
+
+## File Structure
+```
+solar-simu/
+├── index.html      # Main HTML with UI structure
+├── styles.css      # All CSS styles
+├── main.js         # JavaScript logic (Three.js, AI)
+├── shaders.js      # GLSL shaders (currently unused)
+├── AGENTS.md      # Agent rules for development
+└── SPEC.md        # This specification
+```
+
+## External Dependencies
+- Three.js: https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js
+- OrbitControls: https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js
+- Tailwind: https://cdn.tailwindcss.com
+- Fonts: Google Fonts (Orbitron, Share Tech Mono)
+- Textures: raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/
+
+## Browser Support
+- Modern browsers with WebGL support
+- Tested on: Chrome, Firefox, Safari, Edge
+
+## Known Limitations
+- External textures require CORS-enabled hosting (works on GitHub Pages)
+- No mobile touch controls
+- Single-user (no state persistence)
+- API key stored in session only (not persisted)
