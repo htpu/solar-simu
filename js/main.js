@@ -11,7 +11,7 @@ const textureLoader = new THREE.TextureLoader();
 
 let currentDate = new Date();
 let isManualTimeControl = false;
-let timelineMode = 'manual';
+let timelineMode = 'auto';
 
 const astronomicalEvents = [
     { year: 1054, month: 7, day: 4, name: "Supernova SN 1054 (Crab Nebula)", type: "supernova" },
@@ -380,6 +380,12 @@ function init() {
     createSun();
     createPlanets();
     populateIndex();
+
+    uiElements.speedRange.addEventListener('input', () => {
+        if (parseFloat(uiElements.speedRange.value) > 0) {
+            timelineMode = 'auto';
+        }
+    });
 
     window.addEventListener('resize', onWindowResize);
     window.addEventListener('mousemove', onMouseMove);
