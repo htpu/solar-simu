@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Solar System - AI Digital Twin V0.1.4</title>
+    <title>3D Solar System - AI Digital Twin V0.1.5</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -24,7 +24,7 @@
     <div class="ui-panel-left glass-panel" id="panel-left">
         <div class="flex justify-between items-center mb-2">
             <h3>Celestial List</h3>
-            <span class="text-[9px] text-cyan-600">v0.1.4</span>
+            <span class="text-[9px] text-cyan-600">v0.1.5</span>
         </div>
         <div id="panel-left-content">
             <div id="index-list" class="mt-4">
@@ -35,6 +35,38 @@
     </div>
 
     <button id="toggle-left" class="mobile-toggle mobile-toggle-left" onclick="togglePanel('left')">☰</button>
+
+    <button id="mobile-menu-btn" class="mobile-menu-btn" onclick="toggleMobileMenu()">⚙</button>
+
+    <div id="mobile-menu" class="mobile-menu glass-panel hidden">
+        <div class="mobile-menu-tabs">
+            <button class="mobile-tab active" data-tab="planets" onclick="switchMobileTab('planets')">🪐</button>
+            <button class="mobile-tab" data-tab="time" onclick="switchMobileTab('time')">⏱</button>
+            <button class="mobile-tab" data-tab="ai" onclick="switchMobileTab('ai')">🤖</button>
+        </div>
+        <div id="mobile-tab-planets" class="mobile-tab-content">
+            <div class="text-[10px] text-cyan-400 mb-2">PLANETS</div>
+            <div id="mobile-planet-btns"></div>
+        </div>
+        <div id="mobile-tab-time" class="mobile-tab-content hidden">
+            <div class="text-[10px] text-cyan-400 mb-2">TIME RATE</div>
+            <input type="range" id="mobile-speedRange" min="0.00027" max="365" step="0.00027" value="1">
+            <div id="mobile-speedVal" class="text-center text-[10px] my-2">1.0d/s</div>
+            <div class="text-[10px] text-cyan-400 mb-2 mt-4">DATE</div>
+            <div class="flex gap-1 mb-2">
+                <select id="mobile-timeline-year" class="key-input w-full text-center text-[10px]"></select>
+                <select id="mobile-timeline-month" class="key-input w-full text-center text-[10px]"></select>
+                <select id="mobile-timeline-day" class="key-input w-full text-center text-[10px]"></select>
+            </div>
+            <div id="mobile-timeline-events" class="text-[9px] text-gray-400 max-h-20 overflow-y-auto"></div>
+        </div>
+        <div id="mobile-tab-ai" class="mobile-tab-content hidden">
+            <div class="text-[10px] text-cyan-400 mb-2">GEMINI API KEY</div>
+            <input type="password" id="mobile-apiKeyInput" class="key-input" placeholder="Enter API Key...">
+            <button class="ai-btn w-full mt-2" onclick="generateDetailedIntel()">✨ SCAN</button>
+            <button class="ai-btn w-full mt-2" onclick="resetView()">🏠 RESET VIEW</button>
+        </div>
+    </div>
 
     <div class="ui-panel-right glass-panel" id="panel-right">
         <h2>Command Center</h2>
