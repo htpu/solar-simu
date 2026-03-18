@@ -284,34 +284,34 @@ function initTimeline() {
 }
 
 const celestialData = [
-    { name: "Mercury", size: 0.8, dist: 25, speed: 0.047, period: 88, color: "#9e9e9e", incl: 7.0, texture: "textures/mercury.jpg" },
-    { name: "Venus", size: 1.5, dist: 40, speed: 0.035, period: 225, color: "#e3bb76", incl: 3.4, texture: "textures/venus_surface.jpg" },
-    { name: "Earth", size: 1.6, dist: 60, speed: 0.029, period: 365.25, color: "#2271b3", incl: 0, texture: "textures/earth_daymap.jpg", moons: [
-        { name: "Moon", size: 0.4, dist: 4, speed: 0.8, texture: "textures/moon.jpg" }
+    { name: "Mercury", mass: "3.30 × 10²³ kg", diameter: "4,880 km", rotation: "58.6 days", realPeriod: "88 days", size: 0.8, dist: 25, speed: 0.047, period: 88, color: "#9e9e9e", incl: 7.0, texture: "textures/mercury.jpg" },
+    { name: "Venus", mass: "4.87 × 10²⁴ kg", diameter: "12,104 km", rotation: "243 days (retrograde)", realPeriod: "225 days", size: 1.5, dist: 40, speed: 0.035, period: 225, color: "#e3bb76", incl: 3.4, texture: "textures/venus_surface.jpg" },
+    { name: "Earth", mass: "5.97 × 10²⁴ kg", diameter: "12,742 km", rotation: "23.9 hours", realPeriod: "365.25 days", size: 1.6, dist: 60, speed: 0.029, period: 365.25, color: "#2271b3", incl: 0, texture: "textures/earth_daymap.jpg", moons: [
+        { name: "Moon", mass: "7.34 × 10²² kg", diameter: "3,474 km", rotation: "27.3 days", realPeriod: "27.3 days", size: 0.4, dist: 4, speed: 0.8, texture: "textures/moon.jpg" }
     ]},
-    { name: "Mars", size: 1.2, dist: 80, speed: 0.024, period: 687, color: "#e27b58", incl: 1.8, texture: "textures/mars.jpg", moons: [
-        { name: "Phobos", size: 0.15, dist: 2.5, speed: 2.5, texture: "textures/phobos.jpg" },
-        { name: "Deimos", size: 0.1, dist: 3.5, speed: 1.8, texture: "textures/phobos.jpg" }
+    { name: "Mars", mass: "6.42 × 10²³ kg", diameter: "6,779 km", rotation: "24.6 hours", realPeriod: "687 days", size: 1.2, dist: 80, speed: 0.024, period: 687, color: "#e27b58", incl: 1.8, texture: "textures/mars.jpg", moons: [
+        { name: "Phobos", mass: "1.06 × 10¹⁶ kg", diameter: "22.4 km", rotation: "7.66 hours", realPeriod: "7.66 hours", size: 0.15, dist: 2.5, speed: 2.5, texture: "textures/phobos.jpg" },
+        { name: "Deimos", mass: "1.48 × 10¹⁵ kg", diameter: "12.4 km", rotation: "30.3 hours", realPeriod: "30.3 hours", size: 0.1, dist: 3.5, speed: 1.8, texture: "textures/phobos.jpg" }
     ]},
-    { name: "Jupiter", size: 4.5, dist: 130, speed: 0.013, period: 4333, color: "#d39c7e", incl: 1.3, texture: "textures/jupiter.jpg", moons: [
-        { name: "Io", size: 0.3, dist: 7, speed: 2.0, texture: "textures/io.jpg" },
-        { name: "Europa", size: 0.25, dist: 8.5, speed: 1.8, texture: "textures/europa.jpg" },
-        { name: "Ganymede", size: 0.4, dist: 10.5, speed: 1.5, texture: "textures/ganymede.jpg" },
-        { name: "Callisto", size: 0.35, dist: 13, speed: 1.2, texture: "textures/callisto.jpg" }
+    { name: "Jupiter", mass: "1.89 × 10²⁷ kg", diameter: "139,820 km", rotation: "9.9 hours", realPeriod: "11.86 years", size: 4.5, dist: 130, speed: 0.013, period: 4333, color: "#d39c7e", incl: 1.3, texture: "textures/jupiter.jpg", moons: [
+        { name: "Io", mass: "8.93 × 10²² kg", diameter: "3,643 km", rotation: "1.77 days", realPeriod: "1.77 days", size: 0.3, dist: 7, speed: 2.0, texture: "textures/io.jpg" },
+        { name: "Europa", mass: "4.80 × 10²² kg", diameter: "3,121 km", rotation: "3.55 days", realPeriod: "3.55 days", size: 0.25, dist: 8.5, speed: 1.8, texture: "textures/europa.jpg" },
+        { name: "Ganymede", mass: "1.48 × 10²³ kg", diameter: "5,268 km", rotation: "7.15 days", realPeriod: "7.15 days", size: 0.4, dist: 10.5, speed: 1.5, texture: "textures/ganymede.jpg" },
+        { name: "Callisto", mass: "1.07 × 10²³ kg", diameter: "4,820 km", rotation: "16.68 days", realPeriod: "16.68 days", size: 0.35, dist: 13, speed: 1.2, texture: "textures/callisto.jpg" }
     ]},
-    { name: "Saturn", size: 3.8, dist: 180, speed: 0.009, period: 10759, color: "#c5ab6e", incl: 2.5, hasRings: true, texture: "textures/saturn.jpg", ringTexture: "textures/saturn_ring.png", moons: [
-        { name: "Titan", size: 0.4, dist: 9, speed: 1.2, texture: "textures/titan.jpg" },
-        { name: "Enceladus", size: 0.2, dist: 11, speed: 1.8, texture: "textures/enceladus.jpg" }
+    { name: "Saturn", mass: "5.68 × 10²⁶ kg", diameter: "116,460 km", rotation: "10.7 hours", realPeriod: "29.45 years", size: 3.8, dist: 180, speed: 0.009, period: 10759, color: "#c5ab6e", incl: 2.5, hasRings: true, texture: "textures/saturn.jpg", ringTexture: "textures/saturn_ring.png", moons: [
+        { name: "Titan", mass: "1.34 × 10²³ kg", diameter: "5,149 km", rotation: "15.94 days", realPeriod: "15.94 days", size: 0.4, dist: 9, speed: 1.2, texture: "textures/titan.jpg" },
+        { name: "Enceladus", mass: "1.08 × 10²⁰ kg", diameter: "504 km", rotation: "1.37 days", realPeriod: "1.37 days", size: 0.2, dist: 11, speed: 1.8, texture: "textures/enceladus.jpg" }
     ]},
-    { name: "Uranus", size: 2.5, dist: 230, speed: 0.006, period: 30687, color: "#bbe1e4", incl: 0.8, texture: "textures/uranus.jpg", moons: [
-        { name: "Titania", size: 0.25, dist: 6, speed: 1.5, texture: "textures/titania.jpg" },
-        { name: "Oberon", size: 0.25, dist: 7.5, speed: 1.3, texture: "textures/titania.jpg" }
+    { name: "Uranus", mass: "8.68 × 10²⁵ kg", diameter: "50,724 km", rotation: "17.2 hours (retrograde)", realPeriod: "84 years", size: 2.5, dist: 230, speed: 0.006, period: 30687, color: "#bbe1e4", incl: 0.8, texture: "textures/uranus.jpg", moons: [
+        { name: "Titania", mass: "3.40 × 10²¹ kg", diameter: "1,576 km", rotation: "8.7 days", realPeriod: "8.7 days", size: 0.25, dist: 6, speed: 1.5, texture: "textures/titania.jpg" },
+        { name: "Oberon", mass: "3.01 × 10²¹ kg", diameter: "1,522 km", rotation: "13.46 days", realPeriod: "13.46 days", size: 0.25, dist: 7.5, speed: 1.3, texture: "textures/titania.jpg" }
     ]},
-    { name: "Neptune", size: 2.4, dist: 270, speed: 0.005, period: 60190, color: "#6081ff", incl: 1.8, texture: "textures/neptune.jpg", moons: [
-        { name: "Triton", size: 0.3, dist: 6, speed: 1.4, texture: "textures/triton.jpg" }
+    { name: "Neptune", mass: "1.02 × 10²⁶ kg", diameter: "49,244 km", rotation: "16.1 hours", realPeriod: "164.8 years", size: 2.4, dist: 270, speed: 0.005, period: 60190, color: "#6081ff", incl: 1.8, texture: "textures/neptune.jpg", moons: [
+        { name: "Triton", mass: "2.14 × 10²² kg", diameter: "2,706 km", rotation: "5.87 days (retrograde)", realPeriod: "5.87 days (retrograde)", size: 0.3, dist: 6, speed: 1.4, texture: "textures/triton.jpg" }
     ]},
-    { name: "Pluto", size: 0.6, dist: 310, speed: 0.004, period: 90560, color: "#937d64", incl: 17.2, texture: "textures/pluto.jpg", moons: [
-        { name: "Charon", size: 0.2, dist: 2, speed: 2.0, texture: "textures/charon.jpg" }
+    { name: "Pluto", mass: "1.30 × 10²² kg", diameter: "2,376 km", rotation: "6.38 days (retrograde)", realPeriod: "248 years", size: 0.6, dist: 310, speed: 0.004, period: 90560, color: "#937d64", incl: 17.2, texture: "textures/pluto.jpg", moons: [
+        { name: "Charon", mass: "1.58 × 10²¹ kg", diameter: "1,212 km", rotation: "6.38 days", realPeriod: "6.38 days", size: 0.2, dist: 2, speed: 2.0, texture: "textures/charon.jpg" }
     ]}
 ];
 
@@ -367,6 +367,10 @@ function init() {
         tooltip: document.getElementById('planet-tooltip'),
         ttName: document.getElementById('tt-name'),
         ttDist: document.getElementById('tt-dist'),
+        ttMass: document.getElementById('tt-mass'),
+        ttDiameter: document.getElementById('tt-diameter'),
+        ttRotation: document.getElementById('tt-rotation'),
+        ttPeriod: document.getElementById('tt-period'),
         aiStatus: document.getElementById('ai-status'),
         aiPulse: document.getElementById('ai-pulse'),
         detailedBox: document.getElementById('ai-detailed-box'),
@@ -464,7 +468,7 @@ function createSun() {
     const texture = loadTexture(sunTextureUrl);
     const sunMat = new THREE.MeshBasicMaterial({ map: texture });
     const sun = new THREE.Mesh(sunGeo, sunMat);
-    sun.userData = { name: "Sun", dist: 0, baseScale: 1.0 };
+    sun.userData = { name: "Sun", dist: 0, baseScale: 1.0, mass: "1.989 × 10³⁰ kg", diameter: "1.39 million km", rotation: "27 days", realPeriod: "Galactic orbit ~230M years" };
     scene.add(sun);
     planets.push({ mesh: sun, speed: 0, group: new THREE.Group() });
 }
@@ -491,7 +495,7 @@ function createPlanets() {
             new THREE.MeshStandardMaterial({ map: texture, roughness: 0.8 })
         );
         mesh.position.x = data.dist;
-        mesh.userData = { name: data.name, dist: data.dist, baseScale: 1.0 };
+        mesh.userData = { name: data.name, dist: data.dist, baseScale: 1.0, ...data };
         orbitGroup.add(mesh);
 
         if (data.hasRings) {
@@ -519,7 +523,7 @@ function createPlanets() {
                     new THREE.MeshStandardMaterial({ map: moonTexture, roughness: 0.8 })
                 );
                 moonMesh.position.x = moonData.dist;
-                moonMesh.userData = { name: moonData.name, isMoon: true };
+                moonMesh.userData = { name: moonData.name, isMoon: true, ...moonData };
                 moonGroup.add(moonMesh);
                 planets.push({ mesh: moonMesh, group: moonGroup, speed: moonData.speed, isMoon: true, parentPlanet: mesh });
             });
@@ -895,7 +899,11 @@ function animate() {
             hoveredObject = obj;
             uiElements.tooltip.style.display = 'block';
             uiElements.ttName.innerText = obj.userData.name.toUpperCase();
-            uiElements.ttDist.innerText = `${(obj.userData.dist / 60).toFixed(2)} AU`;
+            uiElements.ttDist.innerText = obj.userData.name === "Sun" ? "0 AU" : `${(obj.userData.dist / 60).toFixed(2)} AU`;
+            uiElements.ttMass.innerText = obj.userData.mass || "Unknown";
+            uiElements.ttDiameter.innerText = obj.userData.diameter || "Unknown";
+            uiElements.ttRotation.innerText = obj.userData.rotation || "Unknown";
+            uiElements.ttPeriod.innerText = obj.userData.realPeriod || "Unknown";
             if(keyPresent) {
                 uiElements.aiStatus.innerText = `"Neural Link Active: Focusing on ${obj.userData.name}."`;
             } else {
