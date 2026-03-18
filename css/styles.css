@@ -92,7 +92,7 @@ canvas { display: block; }
     border: 1px solid rgba(0, 243, 255, 0.2);
 }
 
-#panel-left, #panel-right, #panel-left-content, #panel-right-content, .ui-panel-bottom, .ui-panel-left, .ui-panel-right {
+#panel-right, #panel-right-content, .ui-panel-bottom, .ui-panel-right {
     display: none !important;
 }
 
