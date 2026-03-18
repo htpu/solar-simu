@@ -284,43 +284,46 @@ function initTimeline() {
 }
 
 const celestialData = [
-    { name: "Mercury", mass: "3.30 × 10²³ kg", diameter: "4,880 km", rotation: "58.6 days", realPeriod: "88 days", size: 0.8, dist: 25, speed: 0.047, period: 88, color: "#9e9e9e", incl: 7.0, texture: "textures/mercury.jpg" },
-    { name: "Venus", mass: "4.87 × 10²⁴ kg", diameter: "12,104 km", rotation: "243 days (retrograde)", realPeriod: "225 days", size: 1.5, dist: 40, speed: 0.035, period: 225, color: "#e3bb76", incl: 3.4, texture: "textures/venus_surface.jpg" },
-    { name: "Earth", mass: "5.97 × 10²⁴ kg", diameter: "12,742 km", rotation: "23.9 hours", realPeriod: "365.25 days", size: 1.6, dist: 60, speed: 0.029, period: 365.25, color: "#2271b3", incl: 0, texture: "textures/earth_daymap.jpg", moons: [
-        { name: "Moon", mass: "7.34 × 10²² kg", diameter: "3,474 km", rotation: "27.3 days", realPeriod: "27.3 days", size: 0.4, dist: 4, speed: 0.8, texture: "textures/moon.jpg" }
+    { name: "Mercury", j2000L0: 252.25, mass: "3.30 × 10²³ kg", diameter: "4,880 km", rotation: "58.6 days", realPeriod: "88 days", size: 0.8, dist: 25, speed: 0.047, period: 88, color: "#9e9e9e", incl: 7.0, texture: "textures/mercury.jpg" },
+    { name: "Venus", j2000L0: 181.98, mass: "4.87 × 10²⁴ kg", diameter: "12,104 km", rotation: "243 days (retrograde)", realPeriod: "225 days", size: 1.5, dist: 40, speed: 0.035, period: 225, color: "#e3bb76", incl: 3.4, texture: "textures/venus_surface.jpg" },
+    { name: "Earth", j2000L0: 100.46, mass: "5.97 × 10²⁴ kg", diameter: "12,742 km", rotation: "23.9 hours", realPeriod: "365.25 days", size: 1.6, dist: 60, speed: 0.029, period: 365.25, color: "#2271b3", incl: 0, texture: "textures/earth_daymap.jpg", moons: [
+        { name: "Moon", j2000L0: 125.08, mass: "7.34 × 10²² kg", diameter: "3,474 km", rotation: "27.3 days", realPeriod: "27.3 days", size: 0.4, dist: 4, speed: 0.8, texture: "textures/moon.jpg" }
     ]},
-    { name: "Mars", mass: "6.42 × 10²³ kg", diameter: "6,779 km", rotation: "24.6 hours", realPeriod: "687 days", size: 1.2, dist: 80, speed: 0.024, period: 687, color: "#e27b58", incl: 1.8, texture: "textures/mars.jpg", moons: [
+    { name: "Mars", j2000L0: 355.45, mass: "6.42 × 10²³ kg", diameter: "6,779 km", rotation: "24.6 hours", realPeriod: "687 days", size: 1.2, dist: 80, speed: 0.024, period: 687, color: "#e27b58", incl: 1.8, texture: "textures/mars.jpg", moons: [
         { name: "Phobos", mass: "1.06 × 10¹⁶ kg", diameter: "22.4 km", rotation: "7.66 hours", realPeriod: "7.66 hours", size: 0.15, dist: 2.5, speed: 2.5, texture: "textures/phobos.jpg" },
         { name: "Deimos", mass: "1.48 × 10¹⁵ kg", diameter: "12.4 km", rotation: "30.3 hours", realPeriod: "30.3 hours", size: 0.1, dist: 3.5, speed: 1.8, texture: "textures/phobos.jpg" }
     ]},
-    { name: "Jupiter", mass: "1.89 × 10²⁷ kg", diameter: "139,820 km", rotation: "9.9 hours", realPeriod: "11.86 years", size: 4.5, dist: 130, speed: 0.013, period: 4333, color: "#d39c7e", incl: 1.3, texture: "textures/jupiter.jpg", moons: [
+    { name: "Jupiter", j2000L0: 34.4, mass: "1.89 × 10²⁷ kg", diameter: "139,820 km", rotation: "9.9 hours", realPeriod: "11.86 years", size: 4.5, dist: 130, speed: 0.013, period: 4333, color: "#d39c7e", incl: 1.3, texture: "textures/jupiter.jpg", moons: [
         { name: "Io", mass: "8.93 × 10²² kg", diameter: "3,643 km", rotation: "1.77 days", realPeriod: "1.77 days", size: 0.3, dist: 7, speed: 2.0, texture: "textures/io.jpg" },
         { name: "Europa", mass: "4.80 × 10²² kg", diameter: "3,121 km", rotation: "3.55 days", realPeriod: "3.55 days", size: 0.25, dist: 8.5, speed: 1.8, texture: "textures/europa.jpg" },
         { name: "Ganymede", mass: "1.48 × 10²³ kg", diameter: "5,268 km", rotation: "7.15 days", realPeriod: "7.15 days", size: 0.4, dist: 10.5, speed: 1.5, texture: "textures/ganymede.jpg" },
         { name: "Callisto", mass: "1.07 × 10²³ kg", diameter: "4,820 km", rotation: "16.68 days", realPeriod: "16.68 days", size: 0.35, dist: 13, speed: 1.2, texture: "textures/callisto.jpg" }
     ]},
-    { name: "Saturn", mass: "5.68 × 10²⁶ kg", diameter: "116,460 km", rotation: "10.7 hours", realPeriod: "29.45 years", size: 3.8, dist: 180, speed: 0.009, period: 10759, color: "#c5ab6e", incl: 2.5, hasRings: true, texture: "textures/saturn.jpg", ringTexture: "textures/saturn_ring.png", moons: [
+    { name: "Saturn", j2000L0: 49.94, mass: "5.68 × 10²⁶ kg", diameter: "116,460 km", rotation: "10.7 hours", realPeriod: "29.45 years", size: 3.8, dist: 180, speed: 0.009, period: 10759, color: "#c5ab6e", incl: 2.5, hasRings: true, texture: "textures/saturn.jpg", ringTexture: "textures/saturn_ring.png", moons: [
         { name: "Titan", mass: "1.34 × 10²³ kg", diameter: "5,149 km", rotation: "15.94 days", realPeriod: "15.94 days", size: 0.4, dist: 9, speed: 1.2, texture: "textures/titan.jpg" },
         { name: "Enceladus", mass: "1.08 × 10²⁰ kg", diameter: "504 km", rotation: "1.37 days", realPeriod: "1.37 days", size: 0.2, dist: 11, speed: 1.8, texture: "textures/enceladus.jpg" }
     ]},
-    { name: "Uranus", mass: "8.68 × 10²⁵ kg", diameter: "50,724 km", rotation: "17.2 hours (retrograde)", realPeriod: "84 years", size: 2.5, dist: 230, speed: 0.006, period: 30687, color: "#bbe1e4", incl: 0.8, texture: "textures/uranus.jpg", moons: [
+    { name: "Uranus", j2000L0: 313.23, mass: "8.68 × 10²⁵ kg", diameter: "50,724 km", rotation: "17.2 hours (retrograde)", realPeriod: "84 years", size: 2.5, dist: 230, speed: 0.006, period: 30687, color: "#bbe1e4", incl: 0.8, texture: "textures/uranus.jpg", moons: [
         { name: "Titania", mass: "3.40 × 10²¹ kg", diameter: "1,576 km", rotation: "8.7 days", realPeriod: "8.7 days", size: 0.25, dist: 6, speed: 1.5, texture: "textures/titania.jpg" },
         { name: "Oberon", mass: "3.01 × 10²¹ kg", diameter: "1,522 km", rotation: "13.46 days", realPeriod: "13.46 days", size: 0.25, dist: 7.5, speed: 1.3, texture: "textures/titania.jpg" }
     ]},
-    { name: "Neptune", mass: "1.02 × 10²⁶ kg", diameter: "49,244 km", rotation: "16.1 hours", realPeriod: "164.8 years", size: 2.4, dist: 270, speed: 0.005, period: 60190, color: "#6081ff", incl: 1.8, texture: "textures/neptune.jpg", moons: [
+    { name: "Neptune", j2000L0: 304.88, mass: "1.02 × 10²⁶ kg", diameter: "49,244 km", rotation: "16.1 hours", realPeriod: "164.8 years", size: 2.4, dist: 270, speed: 0.005, period: 60190, color: "#6081ff", incl: 1.8, texture: "textures/neptune.jpg", moons: [
         { name: "Triton", mass: "2.14 × 10²² kg", diameter: "2,706 km", rotation: "5.87 days (retrograde)", realPeriod: "5.87 days (retrograde)", size: 0.3, dist: 6, speed: 1.4, texture: "textures/triton.jpg" }
     ]},
-    { name: "Pluto", mass: "1.30 × 10²² kg", diameter: "2,376 km", rotation: "6.38 days (retrograde)", realPeriod: "248 years", size: 0.6, dist: 310, speed: 0.004, period: 90560, color: "#937d64", incl: 17.2, texture: "textures/pluto.jpg", moons: [
+    { name: "Pluto", j2000L0: 238.92, mass: "1.30 × 10²² kg", diameter: "2,376 km", rotation: "6.38 days (retrograde)", realPeriod: "248 years", size: 0.6, dist: 310, speed: 0.004, period: 90560, color: "#937d64", incl: 17.2, texture: "textures/pluto.jpg", moons: [
         { name: "Charon", mass: "1.58 × 10²¹ kg", diameter: "1,212 km", rotation: "6.38 days", realPeriod: "6.38 days", size: 0.2, dist: 2, speed: 2.0, texture: "textures/charon.jpg" }
     ]}
 ];
 
 const J2000 = new Date(Date.UTC(2000, 0, 1, 12, 0, 0));
 
-function getPlanetInitialAngle(period) {
-    const now = new Date();
-    const daysSinceJ2000 = (now - J2000) / (1000 * 60 * 60 * 24);
-    return (daysSinceJ2000 / period) * 2 * Math.PI;
+function getPlanetAngle(period, j2000L0_deg, date) {
+    if (!period) return 0;
+    const daysSinceJ2000 = (date - J2000) / (1000 * 60 * 60 * 24);
+    const L0_rad = (j2000L0_deg || 0) * (Math.PI / 180);
+    const orbits = daysSinceJ2000 / period;
+    const fractionalOrbit = orbits - Math.floor(orbits);
+    return L0_rad + fractionalOrbit * 2 * Math.PI;
 }
 
 const sunTextureUrl = "textures/sun.jpg";
@@ -413,6 +416,7 @@ function init() {
     createConstellations();
     createSun();
     createPlanets();
+    createKuiperBelt();
     populateIndex();
 
     uiElements.speedRange.addEventListener('input', () => {
@@ -473,13 +477,75 @@ function createSun() {
     planets.push({ mesh: sun, speed: 0, group: new THREE.Group() });
 }
 
+
+function createKuiperBelt() {
+    const kuiperGroup = new THREE.Group();
+    scene.add(kuiperGroup);
+    
+    const count = 2500;
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(count * 3);
+    const colors = new Float32Array(count * 3);
+    const sizes = new Float32Array(count);
+    
+    // Kuiper Belt parameters
+    // Scale matching Pluto's 310 dist, extending to ~400
+    const innerRadius = 300;
+    const outerRadius = 450;
+    
+    const color = new THREE.Color();
+    
+    for (let i = 0; i < count; i++) {
+        // Random distribution with density falling off
+        const radius = innerRadius + Math.random() * Math.random() * (outerRadius - innerRadius);
+        const theta = Math.random() * Math.PI * 2;
+        
+        // Inclination
+        // Kuiper belt is somewhat thick (up to 30 deg inclination, usually less)
+        const maxInclination = (15 * Math.PI) / 180;
+        const phi = (Math.random() - 0.5) * maxInclination * (radius / innerRadius);
+        
+        positions[i * 3] = radius * Math.cos(theta) * Math.cos(phi);
+        positions[i * 3 + 1] = radius * Math.sin(phi);
+        positions[i * 3 + 2] = radius * Math.sin(theta) * Math.cos(phi);
+        
+        // Icey grayish colors
+        const lightness = 0.4 + Math.random() * 0.4;
+        color.setHSL(0.6, 0.1, lightness);
+        colors[i * 3] = color.r;
+        colors[i * 3 + 1] = color.g;
+        colors[i * 3 + 2] = color.b;
+        
+        sizes[i] = Math.random() * 1.5;
+    }
+    
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    
+    // We don't have custom size attribute support in basic material easily,
+    // so we'll just use a uniform size PointsMaterial
+    const material = new THREE.PointsMaterial({
+        size: 0.8,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.6,
+        sizeAttenuation: true
+    });
+    
+    const particles = new THREE.Points(geometry, material);
+    kuiperGroup.add(particles);
+    
+    // Push a dummy object to animate it slowly
+    planets.push({ mesh: particles, group: kuiperGroup, speed: 0.001, isBelt: true });
+}
+
 function createPlanets() {
     celestialData.forEach(data => {
         const orbitGroup = new THREE.Group();
         orbitGroup.rotation.z = THREE.MathUtils.degToRad(data.incl);
         scene.add(orbitGroup);
 
-        const initialAngle = data.period ? getPlanetInitialAngle(data.period) : 0;
+        const initialAngle = data.period ? getPlanetAngle(data.period, data.j2000L0, new Date()) : 0;
         orbitGroup.rotation.y = initialAngle;
 
         const orbitLine = new THREE.Mesh(
@@ -514,9 +580,17 @@ function createPlanets() {
         }
 
         if (data.moons) {
-            const moonGroup = new THREE.Group();
-            mesh.add(moonGroup);
             data.moons.forEach(moonData => {
+                const moonGroup = new THREE.Group();
+                mesh.add(moonGroup);
+                
+                // Add initial angle if period is present
+                if (moonData.period) {
+                    moonGroup.rotation.y = getPlanetAngle(moonData.period, moonData.j2000L0, new Date());
+                } else {
+                    moonGroup.rotation.y = Math.random() * 2 * Math.PI; // random start for unperiodized moons
+                }
+
                 const moonTexture = loadTextureWithFallback(moonData.texture, "#888888");
                 const moonMesh = new THREE.Mesh(
                     new THREE.SphereGeometry(moonData.size, 16, 16),
@@ -772,7 +846,11 @@ function onSceneClick(e) {
         clickMouse.y = -(clientY / window.innerHeight) * 2 + 1;
         
         raycaster.setFromCamera(clickMouse, camera);
-        const hits = raycaster.intersectObjects(planets.map(p => p.mesh));
+        // Filter out belt/particle systems which might not have normal meshes
+        const raycastableMeshes = planets
+            .filter(p => p.mesh && !p.isBelt)
+            .map(p => p.mesh);
+        const hits = raycaster.intersectObjects(raycastableMeshes);
         
         if (hits.length > 0) {
             jumpTo(hits[0].object.userData.name);
@@ -859,7 +937,7 @@ function animate() {
     
     const paused = uiElements.pauseRotation && uiElements.pauseRotation.checked;
     if (!paused && uiElements.simTimeValue) {
-        const daysToAdd = spd * (1 / 60);
+        const daysToAdd = spd * 365.25 * (1 / 60);
         currentDate = new Date(currentDate.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
         const y = currentDate.getFullYear();
         const m = String(currentDate.getMonth() + 1).padStart(2, '0');
@@ -876,10 +954,39 @@ function animate() {
     if (!paused) {
         timeCount += spd * baseVelocityFactor;
         planets.forEach(p => {
-            if (p.isMoon) return;
-            if (!p.group) return;
-            p.group.rotation.y += p.speed * spd * baseVelocityFactor;
-            p.mesh.rotation.y += p.speed * spd * baseVelocityFactor;
+            if (!p.group || !p.mesh) return;
+            const data = p.mesh.userData;
+            if (p.isBelt) {
+                p.group.rotation.y -= p.speed * spd * baseVelocityFactor * 0.1; // slow retrograde
+                return;
+            }
+            if (p.isMoon) {
+                if (data.period) {
+                    p.group.rotation.y = getPlanetAngle(data.period, data.j2000L0, currentDate);
+                } else {
+                    p.group.rotation.y += p.speed * spd * baseVelocityFactor;
+                }
+                p.mesh.rotation.y += p.speed * spd * baseVelocityFactor;
+            } else if (data && data.period) {
+                const absoluteAngle = getPlanetAngle(data.period, data.j2000L0, currentDate);
+                p.group.rotation.y = absoluteAngle;
+                // Spin the planet itself
+                if (data.rotation) {
+                    // Try to extract rotation days from text "23.9 hours" or "58.6 days"
+                    let rotDays = 1;
+                    if (typeof data.rotation === 'string') {
+                        if (data.rotation.includes('hours')) rotDays = parseFloat(data.rotation) / 24;
+                        else if (data.rotation.includes('days')) rotDays = parseFloat(data.rotation);
+                    }
+                    const rotSign = data.rotation.includes('retrograde') ? -1 : 1;
+                    const daysSinceJ2000 = (currentDate - J2000) / (1000 * 60 * 60 * 24);
+                    const orbits = daysSinceJ2000 / rotDays;
+                    const fractionalOrbit = orbits - Math.floor(orbits);
+                    p.mesh.rotation.y = rotSign * fractionalOrbit * 2 * Math.PI;
+                } else {
+                    p.mesh.rotation.y += p.speed * spd * baseVelocityFactor;
+                }
+            }
         });
     }
     
