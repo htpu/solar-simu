@@ -814,6 +814,7 @@ function animate() {
     }
     uiElements.speedVal.innerText = speedText;
     
+    const paused = uiElements.pauseRotation && uiElements.pauseRotation.checked;
     if (!paused && uiElements.simTimeValue) {
         const daysToAdd = spd * (1 / 60);
         currentDate = new Date(currentDate.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
@@ -823,7 +824,6 @@ function animate() {
         uiElements.simTimeValue.textContent = `${y}-${m}-${d}`;
     }
     
-    const paused = uiElements.pauseRotation && uiElements.pauseRotation.checked;
     const trueScale = uiElements.trueScale && uiElements.trueScale.checked;
 
     const keyPresent = getActiveApiKey() !== "";
