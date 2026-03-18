@@ -152,6 +152,12 @@ function initTimeline() {
         minuteSelect.value = currentDate.getMinutes();
         
         document.getElementById('timeline-date').textContent = getTimelineDateString(currentDate);
+        if (uiElements.simTimeValue) {
+            const y = currentDate.getFullYear();
+            const m = String(currentDate.getMonth() + 1).padStart(2, '0');
+            const d = String(currentDate.getDate()).padStart(2, '0');
+            uiElements.simTimeValue.textContent = `${y}-${m}-${d}`;
+        }
         updateTimelinePosition();
     }
     
@@ -366,12 +372,20 @@ function init() {
         detailedBox: document.getElementById('ai-detailed-box'),
         intelBtn: document.getElementById('ai-intel-btn'),
         audioBtn: document.getElementById('audio-btn'),
-        keyInput: document.getElementById('apiKeyInput')
+        keyInput: document.getElementById('apiKeyInput'),
+        simTimeValue: document.getElementById('sim-time-value')
     };
 
     uiElements.tooltip.style.display = 'none';
 
     initTimeline();
+
+    if (uiElements.simTimeValue) {
+        const y = currentDate.getFullYear();
+        const m = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const d = String(currentDate.getDate()).padStart(2, '0');
+        uiElements.simTimeValue.textContent = `${y}-${m}-${d}`;
+    }
 
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 20000);
@@ -712,7 +726,20 @@ function onMouseMove(e) {
     mouse.x = (clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(clientY / window.innerHeight) * 2 + 1;
 }
-function onSceneClick() { if (hoveredObject) targetObject = hoveredObject; }
+function onSceneClick(e) {
+    if (e && e.changedTouches && e.changedTouches.length > 0) {
+        const touch = e.changedTouches[0];
+        mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera);
+        const hits = raycaster.intersectObjects(planets.map(p => p.mesh));
+        if (hits.length > 0) {
+            targetObject = hits[0].object;
+        }
+    } else if (hoveredObject) {
+        targetObject = hoveredObject;
+    }
+}
 
 async function generateDetailedIntel() {
     const obj = hoveredObject || targetObject;
@@ -786,6 +813,16 @@ function animate() {
         speedText = (spd * 365).toFixed(2) + 'y/s';
     }
     uiElements.speedVal.innerText = speedText;
+    
+    if (!paused && uiElements.simTimeValue) {
+        const daysToAdd = spd * (1 / 60);
+        currentDate = new Date(currentDate.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
+        const y = currentDate.getFullYear();
+        const m = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const d = String(currentDate.getDate()).padStart(2, '0');
+        uiElements.simTimeValue.textContent = `${y}-${m}-${d}`;
+    }
+    
     const paused = uiElements.pauseRotation && uiElements.pauseRotation.checked;
     const trueScale = uiElements.trueScale && uiElements.trueScale.checked;
 
