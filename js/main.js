@@ -750,25 +750,34 @@ function onMouseMove(e) {
     mouse.y = -(clientY / window.innerHeight) * 2 + 1;
 }
 function onSceneClick(e) {
+    let clientX, clientY;
+    
     if (e && e.changedTouches && e.changedTouches.length > 0) {
-        const touch = e.changedTouches[0];
-        mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
-        raycaster.setFromCamera(mouse, camera);
+        clientX = e.changedTouches[0].clientX;
+        clientY = e.changedTouches[0].clientY;
+    } else if (e) {
+        clientX = e.clientX;
+        clientY = e.clientY;
+    }
+
+    if (clientX !== undefined && clientY !== undefined) {
+        // Calculate mouse position in normalized device coordinates
+        // (-1 to +1) for both components
+        const clickMouse = new THREE.Vector2();
+        clickMouse.x = (clientX / window.innerWidth) * 2 - 1;
+        clickMouse.y = -(clientY / window.innerHeight) * 2 + 1;
+        
+        raycaster.setFromCamera(clickMouse, camera);
         const hits = raycaster.intersectObjects(planets.map(p => p.mesh));
+        
         if (hits.length > 0) {
             jumpTo(hits[0].object.userData.name);
-        } else {
-            resetView();
-        }
-    } else {
-        // Handle mouse click (hover state is calculated in animate)
-        if (hoveredObject) {
-            jumpTo(hoveredObject.userData.name);
-        } else {
-            resetView();
+            return;
         }
     }
+    
+    // If clicked on empty space, reset view
+    resetView();
 }
 
 async function generateDetailedIntel() {
