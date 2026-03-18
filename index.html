@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Solar System - AI Digital Twin V0.2.7</title>
+    <title>3D Solar System - AI Digital Twin V0.2.8</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="stylesheet" href="css/styles.css?v=0.2.7">
+    <link rel="stylesheet" href="css/styles.css?v=0.2.8">
 </head>
 <body>
 
@@ -33,7 +33,7 @@
     <div class="ui-panel-left glass-panel" id="panel-left">
         <div class="flex justify-between items-center mb-2">
             <h3>Celestial List</h3>
-            <span class="text-[9px] text-cyan-600">v0.2.7</span>
+            <span class="text-[9px] text-cyan-600">v0.2.8</span>
         </div>
         <div id="panel-left-content">
             <div id="index-list" class="mt-4">
@@ -59,7 +59,7 @@
         
         <div class="mb-4">
             <div class="flex justify-between text-[10px]"><span>TIME RATE</span><span id="speedVal">1:1</span></div>
-            <input type="range" id="speedRange" min="0" max="7" step="1" value="3">
+            <input type="range" id="speedRange" min="0" max="7" step="1" value="0">
         </div>
 
         <div class="toggle-row">
@@ -122,7 +122,7 @@
             <h3 class="text-[11px] mb-2">ABOUT</h3>
             <div class="text-[10px] text-gray-400 leading-relaxed">
                 <p>3D Solar System - AI Digital Twin</p>
-                <p class="text-cyan-500 mt-1">v0.2.7</p>
+                <p class="text-cyan-500 mt-1">v0.2.8</p>
                 <p class="mt-2 text-gray-500">Interactive 3D visualization of our solar system with real-time orbital mechanics.</p>
             </div>
         </div>
@@ -132,7 +132,7 @@
 
     <div id="main-menu-overlay" class="main-menu-overlay hidden" onclick="toggleMenu()"></div>
 
-    <script src="js/main.js?v=0.2.7"></script>
-    <div class="fixed bottom-2 right-2 text-[9px] text-cyan-500/50 font-mono pointer-events-none z-50">v0.2.7</div>
+    <script src="js/main.js?v=0.2.8"></script>
+    <div class="fixed bottom-2 right-2 text-[9px] text-cyan-500/50 font-mono pointer-events-none z-50">v0.2.8</div>
 </body>
 </html>
