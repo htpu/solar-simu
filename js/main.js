@@ -420,8 +420,27 @@ function init() {
     window.addEventListener('resize', onWindowResize);
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('touchmove', onMouseMove);
-    window.addEventListener('click', onSceneClick);
-    window.addEventListener('touchend', onSceneClick);
+    
+    // Use pointer events to distinguish click from drag
+    let pointerDownPos = { x: 0, y: 0 };
+    window.addEventListener('pointerdown', (e) => {
+        pointerDownPos.x = e.clientX;
+        pointerDownPos.y = e.clientY;
+    });
+    window.addEventListener('pointerup', (e) => {
+        // Calculate distance moved
+        const dx = e.clientX - pointerDownPos.x;
+        const dy = e.clientY - pointerDownPos.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        // If moved less than 5 pixels, consider it a click
+        if (distance < 5) {
+            // Only trigger if clicking on the canvas (avoid UI clicks)
+            if (e.target.tagName === 'CANVAS') {
+                onSceneClick(e);
+            }
+        }
+    });
     
     animate();
 }
@@ -709,7 +728,11 @@ function jumpTo(name) {
     }
 }
 
-function resetView() { targetObject = null; controls.target.set(0, 0, 0); }
+function resetView() { 
+    targetObject = null; 
+    controls.target.set(0, 0, 0); 
+    document.querySelectorAll('.btn-sci').forEach(b => b.classList.remove('active'));
+}
 function onWindowResize() {
     camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -734,10 +757,17 @@ function onSceneClick(e) {
         raycaster.setFromCamera(mouse, camera);
         const hits = raycaster.intersectObjects(planets.map(p => p.mesh));
         if (hits.length > 0) {
-            targetObject = hits[0].object;
+            jumpTo(hits[0].object.userData.name);
+        } else {
+            resetView();
         }
-    } else if (hoveredObject) {
-        targetObject = hoveredObject;
+    } else {
+        // Handle mouse click (hover state is calculated in animate)
+        if (hoveredObject) {
+            jumpTo(hoveredObject.userData.name);
+        } else {
+            resetView();
+        }
     }
 }
 
