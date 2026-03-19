@@ -1184,19 +1184,38 @@ function animate() {
             } else if (data && data.period) {
                 const absoluteAngle = getPlanetAngle(data.period, data.j2000L0, currentDate);
                 p.group.rotation.y = absoluteAngle;
-                // Spin the planet itself
                 if (data.rotation) {
-                    // Try to extract rotation days from text "23.9 hours" or "58.6 days"
                     let rotDays = 1;
                     if (typeof data.rotation === 'string') {
                         if (data.rotation.includes('hours')) rotDays = parseFloat(data.rotation) / 24;
                         else if (data.rotation.includes('days')) rotDays = parseFloat(data.rotation);
                     }
                     const rotSign = data.rotation.includes('retrograde') ? -1 : 1;
-                    const daysSinceJ2000 = (currentDate - J2000) / (1000 * 60 * 60 * 24);
-                    const orbits = daysSinceJ2000 / rotDays;
-                    const fractionalOrbit = orbits - Math.floor(orbits);
-                    p.mesh.rotation.y = rotSign * fractionalOrbit * 2 * Math.PI;
+                    
+                    // Real-time Earth rotation based on current local time
+                    if (data.name === 'Earth') {
+                        // Calculate current local time for Los Angeles (UTC-7 during PDT)
+                        // LA is at 118°W longitude
+                        const now = new Date();
+                        const utcHours = now.getUTCHours() + now.getUTCMinutes() / 60 + now.getUTCSeconds() / 3600;
+                        const laTimezoneOffset = -7; // PDT
+                        const laLocalHour = (utcHours + 24 + laTimezoneOffset) % 24;
+                        
+                        // At local noon (12:00), that longitude should face the Sun
+                        // Sun is in +Z direction. Earth rotates East (positive rotation in Three.js)
+                        // At 12:00 local: rotation = 0 (Sun-facing side visible)
+                        // At 0:00 local: rotation = π (opposite side visible)
+                        const sunAngle = (12 - laLocalHour) * 15 * Math.PI / 180;
+                        p.mesh.rotation.y = sunAngle;
+                        
+                        // Add axial tilt (23.5°)
+                        p.mesh.rotation.z = 23.5 * Math.PI / 180;
+                    } else {
+                        const daysSinceJ2000 = (currentDate - J2000) / (1000 * 60 * 60 * 24);
+                        const orbits = daysSinceJ2000 / rotDays;
+                        const fractionalOrbit = orbits - Math.floor(orbits);
+                        p.mesh.rotation.y = rotSign * fractionalOrbit * 2 * Math.PI;
+                    }
                 } else {
                     p.mesh.rotation.y += p.speed * spd * baseVelocityFactor;
                 }
