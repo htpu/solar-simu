@@ -2,7 +2,7 @@
 
 ## Project Overview
 - **Name**: 3D Solar System - AI Digital Twin
-- **Version**: 0.2.8
+- **Version**: 0.2.9
 - **Type**: Interactive 3D Web Application
 - **Core Functionality**: Real-time 3D visualization of the solar system with AI-powered planetary analysis via Gemini API
 - **Target Users**: Science enthusiasts, educators, students interested in astronomy
@@ -127,6 +127,11 @@ solar-simu/
 - **Stars**: 12,000 particles, BufferGeometry, white (#ffffff), size 1.2
 - **Milky Way**: 50,000 particles, disk distribution (radius 800-4300), blue-white colors, opacity 0.6
 - **Constellations**: 6 major constellations (Orion, Ursa Major, Cassiopeia, Scorpius, Leo, Cygnus) with lines and labels
+
+### Spacecraft & Satellites
+- **Deep Space Probes**: Voyager 1, Voyager 2, New Horizons, Parker Solar Probe, Juno, Cassini, MAVEN, Mars Odyssey, Curiosity, Perseverance, Ingenuity, Tianwen-1, Rosetta, OSIRIS-REx
+- **Satellite Orbits** (around Earth): ISS (LEO), Hubble (LEO), Starlink (LEO), GPS (MEO), Galileo (MEO), GLONASS (MEO), GEO comms (GEO)
+- **Visualization**: Spacecraft shown as wireframe octahedrons with glow; satellite orbits shown as colored rings around Earth
 
 ## Functionality Specification
 

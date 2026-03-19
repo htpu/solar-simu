@@ -367,6 +367,7 @@ function init() {
         showOrbits: document.getElementById('showOrbits'),
         trueScale: document.getElementById('trueScale'),
         pauseRotation: document.getElementById('pauseRotation'),
+        showSatellites: document.getElementById('showSatellites'),
         tooltip: document.getElementById('planet-tooltip'),
         ttName: document.getElementById('tt-name'),
         ttDist: document.getElementById('tt-dist'),
@@ -416,11 +417,17 @@ function init() {
     createConstellations();
     createSun();
     createPlanets();
+    createSpacecraft();
+    createSatelliteOrbits();
     createKuiperBelt();
     populateIndex();
 
     uiElements.speedRange.addEventListener('input', () => {
         timelineMode = 'auto';
+    });
+
+    uiElements.showSatellites.addEventListener('change', () => {
+        showSatellites = uiElements.showSatellites.checked;
     });
 
     window.addEventListener('resize', onWindowResize);
@@ -647,6 +654,190 @@ function createMilkyWay() {
     scene.add(milkyWay);
 }
 
+const spacecraftData = [
+    { name: "Voyager 1", launch: "1977-09-05", type: "interplanetary", target: "Interstellar", dist: 160, speed: 0.0003, color: 0xff6600, size: 0.08, status: "Interstellar space", notes: "Farthest human-made object, 23.3 billion km from Earth" },
+    { name: "Voyager 2", launch: "1977-08-20", type: "interplanetary", target: "Interstellar", dist: 140, speed: 0.00028, color: 0xff8833, size: 0.08, status: "Interstellar space", notes: "Only spacecraft to visit all four giant planets" },
+    { name: "New Horizons", launch: "2006-01-19", type: "interplanetary", target: "Pluto", dist: 55, speed: 0.0002, color: 0x00ff88, size: 0.06, status: "Kuiper Belt", notes: "First spacecraft to visit Pluto, now exploring KBOs" },
+    { name: "Parker Solar Probe", launch: "2018-08-12", type: "interplanetary", target: "Sun", dist: 25, speed: 0.0005, color: 0xffcc00, size: 0.05, status: "Solar observation", notes: "Closest spacecraft to Sun, enters corona" },
+    { name: "Juno", launch: "2011-08-05", type: "orbiter", target: "Jupiter", dist: 18, speed: 0.00025, color: 0x9966cc, size: 0.05, status: "Jupiter orbit", notes: "Studying Jupiter's atmosphere and interior" },
+    { name: "Cassini", launch: "1997-10-15", type: "orbiter", target: "Saturn", dist: 25, speed: 0.00022, color: 0xffcc66, size: 0.06, status: "Mission ended 2017", notes: "Grand Finale: 294 orbits, then atmospheric entry" },
+    { name: "MAVEN", launch: "2013-11-18", type: "orbiter", target: "Mars", dist: 12, speed: 0.0003, color: 0xff4444, size: 0.04, status: "Mars orbit", notes: "Studying Mars upper atmosphere" },
+    { name: "Mars Odyssey", launch: "2001-04-07", type: "orbiter", target: "Mars", dist: 12, speed: 0.0003, color: 0xff6644, size: 0.04, status: "Mars orbit", notes: "Longest-serving Mars orbiter" },
+    { name: "Curiosity", launch: "2012-11-26", type: "rover", target: "Mars", dist: 12, speed: 0.0003, color: 0xffaa44, size: 0.03, status: "Surface active", notes: "Nuclear-powered rover in Gale Crater" },
+    { name: "Perseverance", launch: "2020-07-30", type: "rover", target: "Mars", dist: 12, speed: 0.0003, color: 0xff8855, size: 0.03, status: "Surface active", notes: "Collecting samples for Earth return" },
+    { name: "Ingenuity", launch: "2020-07-30", type: "helicopter", target: "Mars", dist: 12, speed: 0.0003, color: 0xffcc77, size: 0.02, status: "Mission ended", notes: "First powered flight on another planet" },
+    { name: "Tianwen-1", launch: "2020-07-23", type: "orbiter", target: "Mars", dist: 12, speed: 0.0003, color: 0xff3355, size: 0.04, status: "Mars orbit", notes: "Chinese Mars mission with orbiter, lander, rover" },
+    { name: "Rosetta", launch: "2004-03-02", type: "comet", target: "67P", dist: 80, speed: 0.00015, color: 0x88ccff, size: 0.04, status: "Mission ended 2016", notes: "First spacecraft to orbit a comet" },
+    { name: "OSIRIS-REx", launch: "2016-09-08", type: "asteroid", target: "Bennu", dist: 40, speed: 0.0002, color: 0x44aaff, size: 0.03, status: "Returning to Earth", notes: "Delivered Bennu samples to Earth 2023" }
+];
+
+const satelliteOrbitData = {
+    ISS: { altitude: 408, period: 92.7, inclination: 51.6, color: 0xffffff, type: "LEO" },
+    Hubble: { altitude: 540, period: 95.4, inclination: 28.5, color: 0xaaaaaa, type: "LEO" },
+    Starlink: { altitude: 550, period: 95.6, inclination: 53, color: 0x00ccff, type: "LEO" },
+    GPS_BIIF: { altitude: 20200, period: 717.9, inclination: 55, color: 0xffcc00, type: "MEO" },
+    Galileo: { altitude: 23222, period: 844, inclination: 56, color: 0x00ff88, type: "MEO" },
+    GLONASS: { altitude: 19100, period: 675.8, inclination: 64.8, color: 0xff4444, type: "MEO" },
+    GEO_comm: { altitude: 35786, period: 1440, inclination: 0, color: 0xff6600, type: "GEO" }
+};
+
+let spacecraft = [];
+let satelliteRings = [];
+let showSatellites = true;
+
+function createSpacecraft() {
+    spacecraftData.forEach(data => {
+        const group = new THREE.Group();
+        
+        const geo = new THREE.OctahedronGeometry(data.size, 0);
+        const mat = new THREE.MeshBasicMaterial({ color: data.color, wireframe: true });
+        const mesh = new THREE.Mesh(geo, mat);
+        
+        const glowGeo = new THREE.SphereGeometry(data.size * 2, 8, 8);
+        const glowMat = new THREE.MeshBasicMaterial({ 
+            color: data.color, 
+            transparent: true, 
+            opacity: 0.3 
+        });
+        const glow = new THREE.Mesh(glowGeo, glowMat);
+        
+        group.add(mesh);
+        group.add(glow);
+        
+        const angle = Math.random() * Math.PI * 2;
+        const inclination = (Math.random() - 0.5) * 0.3;
+        group.position.x = Math.cos(angle) * data.dist;
+        group.position.z = Math.sin(angle) * data.dist;
+        group.position.y = Math.sin(inclination) * data.dist * 0.1;
+        
+        mesh.userData = { 
+            name: data.name, 
+            isSpacecraft: true, 
+            ...data 
+        };
+        group.userData = { ...data };
+        
+        scene.add(group);
+        spacecraft.push({ 
+            mesh, 
+            group, 
+            glow, 
+            data,
+            orbitAngle: angle,
+            inclination: inclination,
+            dist: data.dist 
+        });
+    });
+}
+
+function createSatelliteOrbits() {
+    const earthPlanet = planets.find(p => p.mesh.userData.name === "Earth");
+    if (!earthPlanet) return;
+    
+    const earthMesh = earthPlanet.mesh;
+    
+    Object.entries(satelliteOrbitData).forEach(([name, orbit]) => {
+        const scale = 2;
+        const orbitDist = Math.min(orbit.altitude * 0.01 * scale, 8);
+        
+        const ringGeo = new THREE.RingGeometry(orbitDist - 0.05, orbitDist + 0.05, 64);
+        const ringMat = new THREE.MeshBasicMaterial({ 
+            color: orbit.color, 
+            side: THREE.DoubleSide, 
+            transparent: true, 
+            opacity: 0.4 
+        });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.rotation.x = Math.PI / 2;
+        ring.position.copy(earthMesh.position);
+        ring.position.y += 0.1;
+        
+        earthMesh.add(ring);
+        
+        const dotGeo = new THREE.SphereGeometry(0.15, 8, 8);
+        const dotMat = new THREE.MeshBasicMaterial({ color: orbit.color });
+        const dot = new THREE.Mesh(dotGeo, dotMat);
+        dot.position.x = orbitDist;
+        earthMesh.add(dot);
+        
+        satelliteRings.push({ 
+            ring, 
+            dot, 
+            name, 
+            orbit,
+            orbitDist,
+            parent: earthMesh
+        });
+    });
+}
+
+function updateSatellites(time) {
+    spacecraft.forEach(s => {
+        if (!showSatellites) {
+            s.group.visible = false;
+            return;
+        }
+        s.group.visible = true;
+        
+        s.orbitAngle += s.data.speed * time * 0.01;
+        
+        s.group.position.x = Math.cos(s.orbitAngle) * s.dist;
+        s.group.position.z = Math.sin(s.orbitAngle) * s.dist;
+        s.group.position.y = Math.sin(s.inclination) * s.dist * 0.1 + Math.sin(s.orbitAngle * 3) * 0.5;
+        
+        s.mesh.rotation.x += 0.02;
+        s.mesh.rotation.y += 0.03;
+    });
+    
+    satelliteRings.forEach(s => {
+        if (!showSatellites) {
+            s.ring.visible = false;
+            s.dot.visible = false;
+            return;
+        }
+        s.ring.visible = true;
+        s.dot.visible = true;
+        
+        const orbitSpeed = 2 * Math.PI / (s.orbit.period / 92.7);
+        s.dot.position.x = Math.cos(time * orbitSpeed * 0.1) * s.orbitDist;
+        s.dot.position.z = Math.sin(time * orbitSpeed * 0.1) * s.orbitDist;
+        s.dot.position.y = 0;
+    });
+}
+
+function populateIndex() {
+    const container = document.getElementById('planet-btns');
+    celestialData.forEach(d => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-sci';
+        btn.innerText = `[${d.name.toUpperCase()}]`;
+        btn.onclick = () => jumpTo(d.name);
+        container.appendChild(btn);
+    });
+    
+    const satBtn = document.createElement('button');
+    satBtn.className = 'btn-sci';
+    satBtn.innerText = '[SPACECRAFT]';
+    satBtn.onclick = () => jumpToSpacecraft();
+    container.appendChild(satBtn);
+}
+
+function jumpToSpacecraft() {
+    targetObject = null;
+    document.querySelectorAll('.btn-sci').forEach(b => b.classList.remove('active'));
+    
+    const btn = Array.from(document.querySelectorAll('.btn-sci')).find(b => b.innerText.includes('SPACECRAFT'));
+    if(btn) btn.classList.add('active');
+    
+    if (spacecraft.length > 0) {
+        const center = new THREE.Vector3();
+        spacecraft.forEach(s => center.add(s.group.position));
+        center.divideScalar(spacecraft.length);
+        
+        controls.target.lerp(center, 0.08);
+    }
+}
+
 const constellations = [
     {
         name: "ORION",
@@ -796,6 +987,12 @@ function populateIndex() {
 function jumpTo(name) {
     targetObject = null;
     document.querySelectorAll('.btn-sci').forEach(b => b.classList.remove('active'));
+    
+    if (name === 'Spacecraft') {
+        jumpToSpacecraft();
+        return;
+    }
+    
     const found = planets.find(p => p.mesh.userData.name === name);
     if (found) {
         targetObject = found.mesh;
@@ -966,6 +1163,7 @@ function animate() {
 
     if (!paused) {
         timeCount += spd * baseVelocityFactor;
+        updateSatellites(timeCount);
         planets.forEach(p => {
             if (!p.group || !p.mesh) return;
             const data = p.mesh.userData;
@@ -1011,7 +1209,8 @@ function animate() {
     });
 
     raycaster.setFromCamera(mouse, camera);
-    const hits = raycaster.intersectObjects(planets.map(p => p.mesh));
+    const raycastTargets = [...planets.map(p => p.mesh), ...spacecraft.map(s => s.mesh)];
+    const hits = raycaster.intersectObjects(raycastTargets);
 
     if (hits.length > 0) {
         const obj = hits[0].object;
@@ -1019,13 +1218,23 @@ function animate() {
             hoveredObject = obj;
             uiElements.tooltip.style.display = 'block';
             uiElements.ttName.innerText = obj.userData.name.toUpperCase();
-            uiElements.ttDist.innerText = obj.userData.name === "Sun" ? "0 AU" : `${(obj.userData.dist / 60).toFixed(2)} AU`;
-            uiElements.ttMass.innerText = obj.userData.mass || "Unknown";
-            uiElements.ttDiameter.innerText = obj.userData.diameter || "Unknown";
-            uiElements.ttRotation.innerText = obj.userData.rotation || "Unknown";
-            uiElements.ttPeriod.innerText = obj.userData.realPeriod || "Unknown";
+            
+            if (obj.userData.isSpacecraft) {
+                uiElements.ttDist.innerText = `${obj.userData.target} (${obj.userData.status})`;
+                uiElements.ttMass.innerText = obj.userData.notes || "Spacecraft";
+                uiElements.ttDiameter.innerText = obj.userData.type || "Spacecraft";
+                uiElements.ttRotation.innerText = obj.userData.launch || "Unknown";
+                uiElements.ttPeriod.innerText = "N/A";
+            } else {
+                uiElements.ttDist.innerText = obj.userData.name === "Sun" ? "0 AU" : `${(obj.userData.dist / 60).toFixed(2)} AU`;
+                uiElements.ttMass.innerText = obj.userData.mass || "Unknown";
+                uiElements.ttDiameter.innerText = obj.userData.diameter || "Unknown";
+                uiElements.ttRotation.innerText = obj.userData.rotation || "Unknown";
+                uiElements.ttPeriod.innerText = obj.userData.realPeriod || "Unknown";
+            }
+            
             if(keyPresent) {
-                uiElements.aiStatus.innerText = `"Neural Link Active: Focusing on ${obj.userData.name}."`;
+                uiElements.aiStatus.innerText = `"Neural Link Active: Tracking ${obj.userData.name}."`;
             } else {
                 uiElements.aiStatus.innerText = "Target Locked. AI Offline: Input API Key in Command Center.";
             }
