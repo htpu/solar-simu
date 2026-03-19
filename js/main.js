@@ -153,10 +153,7 @@ function initTimeline() {
         
         document.getElementById('timeline-date').textContent = getTimelineDateString(currentDate);
         if (uiElements.simTimeValue) {
-            const y = currentDate.getFullYear();
-            const m = String(currentDate.getMonth() + 1).padStart(2, '0');
-            const d = String(currentDate.getDate()).padStart(2, '0');
-            uiElements.simTimeValue.textContent = `${y}-${m}-${d}`;
+            updateSimTimeDisplay();
         }
         updateTimelinePosition();
     }
@@ -391,10 +388,7 @@ function init() {
     initTimeline();
 
     if (uiElements.simTimeValue) {
-        const y = currentDate.getFullYear();
-        const m = String(currentDate.getMonth() + 1).padStart(2, '0');
-        const d = String(currentDate.getDate()).padStart(2, '0');
-        uiElements.simTimeValue.textContent = `${y}-${m}-${d}`;
+        updateSimTimeDisplay();
     }
 
     scene = new THREE.Scene();
@@ -996,7 +990,7 @@ function animate() {
         const h = String(currentDate.getHours()).padStart(2, '0');
         const min = String(currentDate.getMinutes()).padStart(2, '0');
         const s = String(currentDate.getSeconds()).padStart(2, '0');
-        uiElements.simTimeValue.textContent = `${y}-${m}-${d} ${h}:${min}:${s}`;
+        updateSimTimeDisplay();
     }
     
     const trueScale = uiElements.trueScale && uiElements.trueScale.checked;
@@ -1032,21 +1026,23 @@ function animate() {
                     }
                     const rotSign = data.rotation.includes('retrograde') ? -1 : 1;
                     
-                    // Real-time Earth rotation based on current local time
+                    // Real-time Earth rotation based on currentDate (Simulation Time)
                     if (data.name === 'Earth') {
-                        // Calculate current local time for Los Angeles (UTC-7 during PDT)
-                        // LA is at 118°W longitude
-                        const now = new Date();
-                        const utcHours = now.getUTCHours() + now.getUTCMinutes() / 60 + now.getUTCSeconds() / 3600;
-                        const laTimezoneOffset = -7; // PDT
-                        const laLocalHour = (utcHours + 24 + laTimezoneOffset) % 24;
+                        // Calculate Earth rotation using UTC time from currentDate
+                        // Earth rotates ~15° per hour
+                        // At UTC 12:00, 0° longitude faces Sun (noon)
+                        // At UTC 0:00, 0° longitude faces opposite Sun (midnight)
+                        const utcHours = currentDate.getUTCHours() + currentDate.getUTCMinutes() / 60 + currentDate.getUTCSeconds() / 3600;
                         
-                        // At local noon (12:00), that longitude should face the Sun
-                        // Sun is in +Z direction. Earth rotates East (positive rotation in Three.js)
-                        // At 12:00 local: rotation = 0 (Sun-facing side visible)
-                        // At 0:00 local: rotation = π (opposite side visible)
-                        const sunAngle = (12 - laLocalHour) * 15 * Math.PI / 180;
-                        p.mesh.rotation.y = sunAngle;
+                        // Use J2000.0 as reference: Jan 1, 2000 12:00 TT ≈ Jan 1, 2000 11:58:56 UTC
+                        const daysSinceJ2000 = (currentDate - J2000) / (1000 * 60 * 60 * 24);
+                        
+                        // Earth sidereal rotation period: 0.99726968 days
+                        const rotDays = 0.99726968;
+                        const fractionalRotation = ((daysSinceJ2000 / rotDays) + utcHours / 24) % 1;
+                        if (fractionalRotation < 0) fractionalRotation += 1;
+                        
+                        p.mesh.rotation.y = fractionalRotation * 2 * Math.PI;
                         
                         // Apply axial tilt
                         const axialTilt = data.axialTilt || 0;
@@ -1121,6 +1117,23 @@ function toggleMenu() {
     const overlay = document.getElementById('main-menu-overlay');
     menu.classList.toggle('collapsed');
     overlay.classList.toggle('hidden');
+}
+
+function syncToRealTime() {
+    currentDate = new Date();
+    timelineMode = 'auto';
+    uiElements.speedRange.value = 0;
+    updateSimTimeDisplay();
+}
+
+function updateSimTimeDisplay() {
+    const y = currentDate.getFullYear();
+    const m = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const d = String(currentDate.getDate()).padStart(2, '0');
+    const h = String(currentDate.getHours()).padStart(2, '0');
+    const min = String(currentDate.getMinutes()).padStart(2, '0');
+    const s = String(currentDate.getSeconds()).padStart(2, '0');
+    uiElements.simTimeValue.textContent = `${y}-${m}-${d} ${h}:${min}:${s}`;
 }
 
 window.onload = init;
