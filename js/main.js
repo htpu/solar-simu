@@ -1152,7 +1152,10 @@ function animate() {
         const y = currentDate.getFullYear();
         const m = String(currentDate.getMonth() + 1).padStart(2, '0');
         const d = String(currentDate.getDate()).padStart(2, '0');
-        uiElements.simTimeValue.textContent = `${y}-${m}-${d}`;
+        const h = String(currentDate.getHours()).padStart(2, '0');
+        const min = String(currentDate.getMinutes()).padStart(2, '0');
+        const s = String(currentDate.getSeconds()).padStart(2, '0');
+        uiElements.simTimeValue.textContent = `${y}-${m}-${d} ${h}:${min}:${s}`;
     }
     
     const trueScale = uiElements.trueScale && uiElements.trueScale.checked;
