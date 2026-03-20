@@ -102,6 +102,27 @@ function getTimelineDateString(date) {
     return `${y}-${m}-${d} ${h}:${min}:${s}`;
 }
 
+function initMenuTabs() {
+    const tabs = document.querySelectorAll('.menu-tab');
+    const panels = document.querySelectorAll('.tab-panel');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const targetId = tab.dataset.tab;
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            panels.forEach(p => {
+                p.classList.remove('active');
+                if (p.id === `panel-${targetId}`) {
+                    p.classList.add('active');
+                }
+            });
+        });
+    });
+}
+
 function initTimeline() {
     const yearSelect = document.getElementById('timeline-year');
     const monthSelect = document.getElementById('timeline-month');
@@ -380,11 +401,14 @@ function init() {
         intelBtn: document.getElementById('ai-intel-btn'),
         audioBtn: document.getElementById('audio-btn'),
         keyInput: document.getElementById('apiKeyInput'),
-        simTimeValue: document.getElementById('sim-time-value')
+        simTimeValue: document.getElementById('sim-time-value'),
+        simTimeHours: document.getElementById('sim-time-hours'),
+        celestialMiniList: document.getElementById('celestial-mini-list')
     };
 
     uiElements.tooltip.style.display = 'none';
-
+    
+    initMenuTabs();
     initTimeline();
 
     if (uiElements.simTimeValue) {
@@ -668,14 +692,27 @@ function createMilkyWay() {
 }
 
 function populateIndex() {
-    const container = document.getElementById('planet-btns');
+    const container = document.getElementById('celestial-mini-list');
+    if (!container) return;
+    
     celestialData.forEach(d => {
-        const btn = document.createElement('button');
-        btn.className = 'btn-sci';
-        btn.innerText = `[${d.name.toUpperCase()}]`;
-        btn.onclick = () => jumpTo(d.name);
-        container.appendChild(btn);
+        const item = document.createElement('div');
+        item.className = 'celestial-mini-item';
+        item.innerHTML = `<span class="planet-dot"></span><span>${d.name.toUpperCase()}</span>`;
+        item.onclick = () => jumpTo(d.name);
+        container.appendChild(item);
     });
+    
+    if (uiElements.celestialMiniList) {
+        uiElements.celestialMiniList.innerHTML = '';
+        celestialData.forEach(d => {
+            const item = document.createElement('div');
+            item.className = 'celestial-mini-item';
+            item.innerHTML = `<span class="planet-dot"></span><span>${d.name.toUpperCase()}</span>`;
+            item.onclick = () => jumpTo(d.name);
+            uiElements.celestialMiniList.appendChild(item);
+        });
+    }
 }
 
 const constellations = [
@@ -813,20 +850,9 @@ function createConstellations() {
     });
 }
 
-function populateIndex() {
-    const container = document.getElementById('planet-btns');
-    celestialData.forEach(d => {
-        const btn = document.createElement('button');
-        btn.className = 'btn-sci';
-        btn.innerText = `[${d.name.toUpperCase()}]`;
-        btn.onclick = () => jumpTo(d.name);
-        container.appendChild(btn);
-    });
-}
-
 function jumpTo(name) {
     targetObject = null;
-    document.querySelectorAll('.btn-sci').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.celestial-mini-item').forEach(b => b.classList.remove('active'));
     
     const found = planets.find(p => p.mesh.userData.name === name);
     if (found) {
@@ -898,7 +924,7 @@ async function generateDetailedIntel() {
     if (!obj) return;
     if (!key) { promptForKey(); return; }
 
-    uiElements.intelBtn.disabled = true; uiElements.intelBtn.innerText = "QUERYING...";
+    uiElements.intelBtn.disabled = true; uiElements.intelBtn.innerText = "SCANNING...";
     try {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${key}`;
         const res = await fetch(url, {
@@ -912,14 +938,14 @@ async function generateDetailedIntel() {
         window.currentAiText = text;
         uiElements.aiStatus.innerText = `"Spectral sync complete. Analysis received."`;
     } catch(e) { uiElements.aiStatus.innerText = "Error: Signal lost. Verify your API Key."; }
-    finally { uiElements.intelBtn.disabled = false; uiElements.intelBtn.innerText = "✨ SCAN DATA"; }
+    finally { uiElements.intelBtn.disabled = false; uiElements.intelBtn.innerText = "Initiate Scan"; }
 }
 
 async function toggleAudio() {
     const key = getActiveApiKey();
     if (!key) { promptForKey(); return; }
-    if (currentAudio && !currentAudio.paused) { currentAudio.pause(); currentAudio = null; uiElements.audioBtn.innerText = "🔊"; return; }
-    uiElements.audioBtn.innerText = "⏳";
+    if (currentAudio && !currentAudio.paused) { currentAudio.pause(); currentAudio = null; return; }
+    uiElements.intelBtn.innerText = "LOADING...";
     try {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${key}`;
         const res = await fetch(url, {
@@ -944,9 +970,9 @@ async function toggleAudio() {
         wStr(36, 'data'); view.setUint32(40, bytes.length, true);
         for(let i=0; i<bytes.length; i++) view.setUint8(44+i, bytes[i]);
         currentAudio = new Audio(URL.createObjectURL(new Blob([buffer], {type:'audio/wav'})));
-        currentAudio.play(); uiElements.audioBtn.innerText = "🛑";
-        currentAudio.onended = () => uiElements.audioBtn.innerText = "🔊";
-    } catch(e) { uiElements.audioBtn.innerText = "ERR"; }
+        currentAudio.play();
+        currentAudio.onended = () => {};
+    } catch(e) { uiElements.intelBtn.innerText = "ERROR"; }
 }
 
 function animate() {
@@ -997,7 +1023,7 @@ function animate() {
 
     const keyPresent = getActiveApiKey() !== "";
     uiElements.aiPulse.innerText = keyPresent ? "ON" : "OFF";
-    uiElements.aiPulse.style.color = keyPresent ? "var(--neon-cyan)" : "#666";
+    uiElements.aiPulse.style.color = keyPresent ? "var(--secondary)" : "#666";
 
     if (!paused) {
         timeCount += spd * baseVelocityFactor;
@@ -1072,7 +1098,7 @@ function animate() {
 
     if (hits.length > 0) {
         const obj = hits[0].object;
-        if (hoveredObject !== obj) {
+        if (obj && obj.userData && obj.userData.name && hoveredObject !== obj) {
             hoveredObject = obj;
             uiElements.tooltip.style.display = 'block';
             uiElements.ttName.innerText = obj.userData.name.toUpperCase();
@@ -1094,15 +1120,18 @@ function animate() {
         uiElements.tooltip.style.left = (mouse.x * 0.5 + 0.5) * window.innerWidth + 20 + 'px';
         uiElements.tooltip.style.top = (-mouse.y * 0.5 + 0.5) * window.innerHeight - 80 + 'px';
     } else {
+        if (hoveredObject) {
+            hoveredObject.scale.set(1, 1, 1);
+        }
         hoveredObject = null;
         uiElements.tooltip.style.display = 'none';
     }
 
-    if (targetObject) {
+    if (targetObject && targetObject.userData && targetObject.userData.name) {
         const worldPos = new THREE.Vector3();
         targetObject.getWorldPosition(worldPos);
         controls.target.lerp(worldPos, 0.08);
-        const radius = targetObject.geometry.parameters.radius || 1;
+        const radius = targetObject.geometry ? (targetObject.geometry.parameters?.radius || 1) : 1;
         const idealDist = radius * (trueScale && targetObject.userData.name !== "Sun" ? 30 : 12);
         const camDir = camera.position.clone().sub(worldPos).normalize().multiplyScalar(idealDist).add(worldPos);
         camera.position.lerp(camDir, 0.04);
@@ -1133,7 +1162,13 @@ function updateSimTimeDisplay() {
     const h = String(currentDate.getHours()).padStart(2, '0');
     const min = String(currentDate.getMinutes()).padStart(2, '0');
     const s = String(currentDate.getSeconds()).padStart(2, '0');
-    uiElements.simTimeValue.textContent = `${y}-${m}-${d} ${h}:${min}:${s}`;
+    
+    if (uiElements.simTimeValue) {
+        uiElements.simTimeValue.textContent = `${y}-${m}-${d}`;
+    }
+    if (uiElements.simTimeHours) {
+        uiElements.simTimeHours.textContent = `${h}:${min}:${s}`;
+    }
 }
 
 window.onload = init;

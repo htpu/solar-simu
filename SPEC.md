@@ -2,7 +2,7 @@
 
 ## Project Overview
 - **Name**: 3D Solar System - AI Digital Twin
-- **Version**: 0.2.14
+- **Version**: 0.3.0
 - **Type**: Interactive 3D Web Application
 - **Core Functionality**: Real-time 3D visualization of the solar system with AI-powered planetary analysis via Gemini API
 - **Target Users**: Science enthusiasts, educators, students interested in astronomy
@@ -10,9 +10,48 @@
 ## Technical Stack
 - **Rendering**: Three.js r128
 - **UI Framework**: Tailwind CSS (via CDN)
-- **Fonts**: Orbitron (headings), Share Tech Mono (body)
+- **Fonts**: Exo 2 (headings), JetBrains Mono (data)
 - **Deployment**: GitHub Pages (solar.htpu.net)
 - **Textures**: Local textures in `textures/` directory
+
+## Visual Design (v0.3.0 Redesign)
+
+### Color Palette
+| Role | Color | Hex |
+|------|-------|-----|
+| Primary | Solar Amber | `#f59e0b` |
+| Primary Glow | Amber Transparent | `rgba(245, 158, 11, 0.3)` |
+| Secondary | Deep Violet | `#7c3aed` |
+| Secondary Glow | Violet Transparent | `rgba(124, 58, 237, 0.3)` |
+| Background | Deep Space Navy | `#050818` |
+| Panel BG | Dark Blue Transparent | `rgba(10, 15, 35, 0.92)` |
+| Text Primary | Off White | `#f1f5f9` |
+| Text Secondary | Slate | `#94a3b8` |
+| Text Muted | Gray | `#64748b` |
+| Border Subtle | Amber Dim | `rgba(245, 158, 11, 0.15)` |
+| Border Active | Amber Bright | `rgba(245, 158, 11, 0.5)` |
+
+### Typography
+- **Display Font**: Exo 2, weights 300-700
+- **Mono Font**: JetBrains Mono, weights 300-500
+- **Headings**: 18px, weight 600, letter-spacing 3px, uppercase
+- **Body**: 11-12px, weight 400-500
+- **Data Labels**: 9-10px, weight 600, letter-spacing 1-2px
+
+### Atmospheric Effects
+- **Vignette**: Radial gradient overlay, darkening edges
+- **Background Glow**: Subtle radial gradients at top corners (violet left, amber right)
+- **Film Grain**: SVG noise texture at 3.5% opacity
+- **Panel Borders**: Subtle amber tint with backdrop blur (16-24px)
+
+### Animations
+| Animation | Duration | Easing | Description |
+|-----------|----------|--------|-------------|
+| Fade Slide In | 0.6s | ease-out | Panel entrance with Y translation |
+| Scale In | 0.3s | ease-out | Tab panel transitions |
+| Ring Pulse | 2-3s | ease-out | Neural indicator rings |
+| Glow Pulse | 3s | ease-in-out | Primary color breathing |
+| Cursor Sweep | 2s | ease-in-out | Button highlight sweep |
 
 ## File Structure
 ```
@@ -52,13 +91,27 @@ solar-simu/
 
 ## UI/UX Specification
 
-### Layout Structure
-- **Left Panel** (Celestial List): Fixed position, 200px width, scrollable
-- **Right Panel** (Command Center): Fixed position, 320px width, controls
-- **Bottom Panel** (AI Interface): Fixed position, centered, 800px max-width
+### Layout Structure (v0.3.0)
+- **HUD Time**: Top center, floating badge with date and time
+- **HUD Corners**: Top-left and top-right corner accents (NAV/SYS labels)
+- **Menu Button**: Top-right, 48x48px circular button
+- **Celestial Index**: Bottom-left, minimal expandable list
+- **Command Center**: Right-side modal panel with tabbed sections
 - **Canvas**: Full viewport, z-index 0
 
-### Visual Design
+### Components (v0.3.0)
+1. **Planet Tooltip**: Floating card with amber border, grid layout for data
+2. **HUD Time Badge**: Centered top, shows simulation date and time with sync button
+3. **HUD Corner Accents**: Decorative L-shaped borders with labels
+4. **Celestial Index**: Compact list at bottom-left, dot indicators for planets
+5. **Command Center Modal**:
+   - Controls Tab: Speed slider, toggle switches with track indicators
+   - Timeline Tab: Date display, selector dropdowns, track with animated cursor
+   - Neural Link Tab: Pulsing ring indicator, API key input, scan button
+   - About Tab: Logo, version badge, tech stack tags
+6. **Menu Button**: Fixed top-right, opens Command Center with slide animation
+
+### Visual Design (Legacy)
 - **Color Palette**:
   - Primary: `#00f3ff` (neon cyan)
   - Secondary: `#0066ff` (neon blue)
