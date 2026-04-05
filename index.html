@@ -15,7 +15,43 @@
 
     <div class="atmosphere-overlay"></div>
     <div class="vignette-overlay"></div>
-    <div class="grain-overlay"></div>
+
+    <!-- Onboarding overlay for first-time visitors -->
+    <div id="onboarding-overlay" class="onboarding-overlay hidden">
+        <div class="onboarding-backdrop"></div>
+        <div class="onboarding-card">
+            <div class="onboarding-step" data-step="0">
+                <div class="onboarding-icon">🪐</div>
+                <h3>Welcome to Solar System</h3>
+                <p>An interactive 3D simulation with real orbital mechanics.</p>
+            </div>
+            <div class="onboarding-step hidden" data-step="1">
+                <div class="onboarding-icon">👆</div>
+                <h3>Navigate</h3>
+                <p>Drag to orbit. Scroll to zoom. Click a planet to follow it.</p>
+            </div>
+            <div class="onboarding-step hidden" data-step="2">
+                <div class="onboarding-icon">⚙️</div>
+                <h3>Controls</h3>
+                <p>Open the menu (top right) to adjust time speed, toggle orbits, and explore AI analysis.</p>
+            </div>
+            <div class="onboarding-step hidden" data-step="3">
+                <div class="onboarding-icon">⌨️</div>
+                <h3>Shortcuts</h3>
+                <p><kbd>Space</kbd> pause · <kbd>+</kbd><kbd>−</kbd> speed · <kbd>R</kbd> reset view · <kbd>M</kbd> menu</p>
+            </div>
+            <div class="onboarding-dots">
+                <span class="dot active" data-dot="0"></span>
+                <span class="dot" data-dot="1"></span>
+                <span class="dot" data-dot="2"></span>
+                <span class="dot" data-dot="3"></span>
+            </div>
+            <div class="onboarding-actions">
+                <button class="onboarding-skip" id="onboarding-skip">Skip</button>
+                <button class="onboarding-next" id="onboarding-next">Next</button>
+            </div>
+        </div>
+    </div>
 
     <div id="planet-tooltip">
         <div class="tt-header">
@@ -53,14 +89,6 @@
         </button>
     </div>
 
-    <div class="hud-corner hud-corner-tl">
-        <div class="corner-accent"></div>
-        <span class="corner-label">NAV</span>
-    </div>
-    <div class="hud-corner hud-corner-tr">
-        <div class="corner-accent"></div>
-        <span class="corner-label">SYS</span>
-    </div>
 
     <button id="menu-btn" class="menu-btn" onclick="toggleMenu()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -78,12 +106,17 @@
         <div id="celestial-mini-list"></div>
     </div>
 
+    <!-- Mobile bottom nav -->
+    <div class="mobile-planet-bar" id="mobile-planet-bar">
+        <div id="mobile-planet-list" class="mobile-planet-list"></div>
+    </div>
+
     <div id="main-menu" class="main-menu collapsed">
         <div class="menu-inner">
             <div class="menu-header">
                 <div class="menu-title-group">
-                    <h2>Command Center</h2>
-                    <span class="menu-subtitle">System Interface</span>
+                    <h2>Controls</h2>
+                    <span class="menu-subtitle">Solar System</span>
                 </div>
                 <button onclick="toggleMenu()" class="menu-close">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -115,7 +148,7 @@
                         <path d="M16 10a4 4 0 014 4c0 1.95-1.4 3.58-3.25 3.93"/>
                         <path d="M12 18a4 4 0 014 4"/>
                     </svg>
-                    Neural Link
+                    AI Analysis
                 </button>
                 <button class="menu-tab" data-tab="about">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -136,7 +169,7 @@
                         </div>
                         <input type="range" id="speedRange" min="0" max="7" step="1" value="0" class="solar-slider">
                         <div class="speed-markers">
-                            <span>0</span><span>1x</span><span>10x</span><span>100x</span><span>1Kx</span>
+                            <span>1:1</span><span>1m</span><span>1h</span><span>1d</span><span>1w</span><span>1mo</span><span>1y</span><span>10y</span>
                         </div>
                     </div>
 
@@ -227,8 +260,8 @@
                             </div>
                         </div>
                         <div class="neural-info">
-                            <span class="neural-label">Neural Link</span>
-                            <span class="neural-state" id="ai-status">Dormant</span>
+                            <span class="neural-label">AI Status</span>
+                            <span class="neural-state" id="ai-status">Inactive</span>
                         </div>
                     </div>
 
@@ -250,7 +283,7 @@
                                 <circle cx="11" cy="11" r="8"/>
                                 <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                             </svg>
-                            Initiate Scan
+                            Analyze Planet
                         </button>
                         <button id="audio-btn" class="neural-btn audio-btn hidden" onclick="toggleAudio()">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

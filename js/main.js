@@ -284,7 +284,7 @@ function initTimeline() {
         astronomicalEvents.forEach(event => {
             const div = document.createElement('div');
             div.textContent = `${event.year}: ${event.name}`;
-            div.className = 'cursor-pointer hover:text-cyan-400';
+            div.className = 'timeline-event-item';
             div.addEventListener('click', () => {
                 timelineMode = 'manual';
                 currentDate.setFullYear(event.year);
@@ -352,8 +352,8 @@ function getActiveApiKey() {
 
 function promptForKey() {
     const input = uiElements.keyInput;
-    uiElements.aiStatus.innerText = "Error: [ACCESS DENIED] Please enter API Key in right panel.";
-    uiElements.detailedBox.innerHTML = "<span class='text-red-400'>[NOTICE]</span><br>AI system not ready. Gemini API Key required for scan feature. Please enter key in 'Neural Link Config'.";
+    uiElements.aiStatus.innerText = "API key required. Enter it in the AI Analysis tab.";
+    uiElements.detailedBox.textContent = "Please enter your Gemini API key above to enable AI-powered planet analysis.";
     uiElements.detailedBox.classList.remove('hidden');
     input.focus();
     input.classList.add('error-glow');
@@ -936,9 +936,9 @@ async function generateDetailedIntel() {
         uiElements.detailedBox.classList.remove('hidden');
         uiElements.audioBtn.style.display = 'block';
         window.currentAiText = text;
-        uiElements.aiStatus.innerText = `"Spectral sync complete. Analysis received."`;
-    } catch(e) { uiElements.aiStatus.innerText = "Error: Signal lost. Verify your API Key."; }
-    finally { uiElements.intelBtn.disabled = false; uiElements.intelBtn.innerText = "Initiate Scan"; }
+        uiElements.aiStatus.innerText = `Analysis complete for ${obj.userData.name}.`;
+    } catch(e) { uiElements.aiStatus.innerText = "Error: Could not reach API. Check your key and try again."; }
+    finally { uiElements.intelBtn.disabled = false; uiElements.intelBtn.innerText = "Analyze Planet"; }
 }
 
 async function toggleAudio() {
@@ -1108,9 +1108,9 @@ function animate() {
             uiElements.ttRotation.innerText = obj.userData.rotation || "Unknown";
             uiElements.ttPeriod.innerText = obj.userData.realPeriod || "Unknown";
             if(keyPresent) {
-                uiElements.aiStatus.innerText = `"Neural Link Active: Focusing on ${obj.userData.name}."`;
+                uiElements.aiStatus.innerText = `Ready — hover over ${obj.userData.name} and click Analyze.`;
             } else {
-                uiElements.aiStatus.innerText = "Target Locked. AI Offline: Input API Key in Command Center.";
+                uiElements.aiStatus.innerText = "Enter API key to enable AI analysis.";
             }
         }
         const baseS = (trueScale && obj.userData.name !== "Sun") ? 0.4 : 1.0;
@@ -1171,4 +1171,110 @@ function updateSimTimeDisplay() {
     }
 }
 
-window.onload = init;
+// --- Onboarding ---
+function initOnboarding() {
+    if (localStorage.getItem('solar-simu-onboarded')) return;
+    const overlay = document.getElementById('onboarding-overlay');
+    if (!overlay) return;
+    overlay.classList.remove('hidden');
+
+    let step = 0;
+    const steps = overlay.querySelectorAll('.onboarding-step');
+    const dots = overlay.querySelectorAll('.dot');
+    const nextBtn = document.getElementById('onboarding-next');
+    const skipBtn = document.getElementById('onboarding-skip');
+
+    function showStep(n) {
+        steps.forEach(s => s.classList.add('hidden'));
+        dots.forEach(d => d.classList.remove('active'));
+        steps[n].classList.remove('hidden');
+        dots[n].classList.add('active');
+        nextBtn.textContent = n === steps.length - 1 ? 'Start' : 'Next';
+    }
+
+    nextBtn.addEventListener('click', () => {
+        if (step < steps.length - 1) { step++; showStep(step); }
+        else { closeOnboarding(); }
+    });
+    skipBtn.addEventListener('click', closeOnboarding);
+    dots.forEach(d => {
+        d.addEventListener('click', () => { step = parseInt(d.dataset.dot); showStep(step); });
+    });
+
+    function closeOnboarding() {
+        overlay.classList.add('hidden');
+        localStorage.setItem('solar-simu-onboarded', '1');
+    }
+}
+
+// --- Keyboard shortcuts ---
+function initKeyboardShortcuts() {
+    document.addEventListener('keydown', (e) => {
+        // Don't trigger when typing in inputs
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
+
+        switch (e.key) {
+            case ' ':
+                e.preventDefault();
+                if (uiElements.pauseRotation) {
+                    uiElements.pauseRotation.checked = !uiElements.pauseRotation.checked;
+                }
+                break;
+            case '+':
+            case '=':
+                e.preventDefault();
+                if (uiElements.speedRange) {
+                    const v = Math.min(7, parseInt(uiElements.speedRange.value) + 1);
+                    uiElements.speedRange.value = v;
+                    timelineMode = 'auto';
+                }
+                break;
+            case '-':
+            case '_':
+                e.preventDefault();
+                if (uiElements.speedRange) {
+                    const v = Math.max(0, parseInt(uiElements.speedRange.value) - 1);
+                    uiElements.speedRange.value = v;
+                    timelineMode = 'auto';
+                }
+                break;
+            case 'r':
+            case 'R':
+                resetView();
+                break;
+            case 'm':
+            case 'M':
+                toggleMenu();
+                break;
+            case 'Escape':
+                const menu = document.getElementById('main-menu');
+                if (!menu.classList.contains('collapsed')) toggleMenu();
+                break;
+        }
+    });
+}
+
+// --- Mobile planet bar ---
+function populateMobilePlanetBar() {
+    const container = document.getElementById('mobile-planet-list');
+    if (!container) return;
+    celestialData.forEach(d => {
+        const item = document.createElement('div');
+        item.className = 'mobile-planet-item';
+        const dot = document.createElement('span');
+        dot.className = 'planet-dot';
+        const label = document.createElement('span');
+        label.textContent = d.name;
+        item.appendChild(dot);
+        item.appendChild(label);
+        item.onclick = () => jumpTo(d.name);
+        container.appendChild(item);
+    });
+}
+
+window.onload = function() {
+    init();
+    initOnboarding();
+    initKeyboardShortcuts();
+    populateMobilePlanetBar();
+};
